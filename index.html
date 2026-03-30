@@ -1,0 +1,2092 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Abogado al Toque</title>
+<meta name="theme-color" content="#1a3a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tu Abogado al Toque">
+<link rel="manifest" href="manifest.json">
+<link id="apple-touch-icon" rel="apple-touch-icon">
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2e7d9e;
+    --success: #2e7d52;
+    --warning: #b85c00;
+    --danger: #9b2335;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --border: #dde3ea;
+    --text: #1c2b3a;
+    --muted: #6b7e8f;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  /* HEADER */
+  header { background: var(--primary); color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 100; }
+  header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
+  header span { font-size: 12px; opacity: 0.7; margin-left: auto; }
+  .logo { font-size: 22px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 2px; background: var(--primary); padding: 0 24px; border-bottom: 3px solid var(--accent); }
+  .tab { padding: 10px 18px; cursor: pointer; color: rgba(255,255,255,0.65); font-size: 13px; font-weight: 600; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: all 0.2s; white-space: nowrap; }
+  .tab:hover { color: white; }
+  .tab.active { color: white; border-bottom-color: #7ec8e3; }
+
+  /* LAYOUT */
+  main { max-width: 980px; margin: 0 auto; padding: 24px 16px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card h3 { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .icon { font-size: 18px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+
+  /* FORMS */
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  input, select, textarea { border: 1px solid var(--border); border-radius: 6px; padding: 8px 11px; font-size: 14px; color: var(--text); background: #fff; transition: border 0.15s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,125,158,0.15); }
+  textarea { resize: vertical; min-height: 72px; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #236480; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #1e5c3a; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #7a1a27; }
+  .btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+  .btn-outline:hover { background: var(--accent); color: white; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* RESULTS */
+  .result-box { background: linear-gradient(135deg, #eaf4f9, #f0f7ff); border: 1px solid #b8d8e8; border-radius: var(--radius); padding: 18px; margin-top: 16px; }
+  .result-box h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 14px; border-bottom: 1px solid #b8d8e8; padding-bottom: 8px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #d0e8f0; font-size: 13.5px; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .label { color: var(--muted); }
+  .result-row .value { font-weight: 600; color: var(--text); font-family: 'Courier New', monospace; }
+  .result-total { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 4px; border-top: 2px solid var(--accent); margin-top: 8px; }
+  .result-total .label { font-size: 15px; font-weight: 700; color: var(--primary); }
+  .result-total .value { font-size: 18px; font-weight: 800; color: var(--success); font-family: 'Courier New', monospace; }
+  .result-note { font-size: 11px; color: var(--muted); margin-top: 10px; font-style: italic; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-active { background: #d4edda; color: #155724; }
+  .badge-closed { background: #e2e3e5; color: #383d41; }
+  .badge-urgent { background: #f8d7da; color: #721c24; }
+  .badge-pending { background: #fff3cd; color: #856404; }
+
+  /* CAUSAS TABLE */
+  .causa-list { display: flex; flex-direction: column; gap: 10px; }
+  .causa-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: box-shadow 0.15s; }
+  .causa-item:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+  .causa-header { display: flex; justify-content: space-between; align-items: center; }
+  .causa-title { font-weight: 700; font-size: 14px; color: var(--primary); }
+  .causa-meta { font-size: 12px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap; }
+  .causa-meta span { display: flex; align-items: center; gap: 4px; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+  /* PLAZOS */
+  .plazo-result { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+  .plazo-result h4 { font-weight: 700; color: #b85c00; font-size: 13.5px; }
+  .plazo-result p { font-size: 13px; color: var(--text); margin-top: 6px; }
+  .plazo-result .fecha { font-size: 15px; font-weight: 800; color: var(--primary); }
+  .plazo-result.vencido { background: #fde8e8; border-color: #f5c6cb; }
+  .plazo-result.vencido h4 { color: var(--danger); }
+  .plazo-result.ok { background: #e8f5e9; border-color: #a5d6a7; }
+  .plazo-result.ok h4 { color: var(--success); }
+
+  /* MULTAS */
+  .multa-block { border-left: 4px solid var(--accent); padding: 10px 14px; margin-bottom: 10px; background: #f8fafc; border-radius: 0 8px 8px 0; }
+  .multa-block h4 { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .multa-block p { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+  .multa-valor { font-size: 15px; font-weight: 800; color: var(--warning); font-family: 'Courier New', monospace; }
+
+  /* TOGGLE */
+  .toggle-group { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+  .toggle { position: relative; width: 40px; height: 22px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #ccc; border-radius: 22px; transition: 0.3s; }
+  .toggle-slider:before { content: ''; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+  .toggle-label { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: var(--radius); padding: 24px; max-width: 560px; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  .modal h3 { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 18px; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+  /* SEPARATORS */
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+  /* GATE */
+  .gate-overlay { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 340px; gap: 20px; }
+  .gate-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px; width: 100%; max-width: 420px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); text-align: center; }
+  .gate-box h2 { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+  .gate-box p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .gate-tabs { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; }
+  .gate-tab { flex: 1; padding: 9px 0; font-size: 13px; font-weight: 600; cursor: pointer; background: #f4f6f8; color: var(--muted); border: none; transition: all 0.2s; }
+  .gate-tab.active { background: var(--primary); color: white; }
+  .gate-pin { letter-spacing: 6px; font-size: 20px; font-weight: 700; text-align: center; }
+  .gate-error { color: var(--danger); font-size: 12px; font-weight: 600; margin-top: 8px; display: none; }
+  .session-bar { display: flex; align-items: center; justify-content: space-between; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; font-size: 13px; }
+  .session-bar.cliente { background: #e3f2fd; border-color: #90caf9; }
+  .session-bar span { color: var(--success); font-weight: 600; }
+  .session-bar.cliente span { color: var(--accent); }
+
+  /* INSTALL FAB */
+  .install-fab { position: fixed; bottom: 22px; right: 16px; z-index: 500; background: #25ae60; color: white; border: none; border-radius: 50px; padding: 13px 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 18px rgba(0,0,0,0.28); transition: transform 0.2s, opacity 0.3s; }
+  .install-fab:hover { transform: scale(1.05); }
+  /* INSTALL MODAL */
+  .platform-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .platform-tab { flex: 1; padding: 9px; border-radius: 8px; border: 1.5px solid var(--border); background: #f8fafc; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .platform-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .install-step { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+  .install-step h4 { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .install-step ol { padding-left: 18px; font-size: 13px; color: var(--text); line-height: 1.9; }
+  .install-step li { margin-bottom: 3px; }
+
+  /* PRINT */
+  @media print { header, .tabs, .btn-row, .btn { display: none !important; } }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: #c0cbd6; border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    /* Header compacto */
+    header { padding: 10px 14px; gap: 8px; }
+    header h1 { font-size: 16px; }
+    .logo { font-size: 20px; }
+
+    /* Tabs: scroll horizontal */
+    .tabs { padding: 0 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 0; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { padding: 10px 12px; font-size: 12px; flex-shrink: 0; }
+
+    /* Layout principal */
+    main { padding: 14px 10px; }
+
+    /* Cards */
+    .card { padding: 14px 12px; margin-bottom: 12px; }
+    .card h3 { font-size: 14px; }
+    .card-grid { grid-template-columns: 1fr; gap: 10px; }
+
+    /* Inputs y botones más grandes para dedos */
+    input, select, textarea { padding: 11px 12px; font-size: 15px; }
+    .btn { padding: 11px 16px; font-size: 14px; width: 100%; justify-content: center; }
+    .btn-sm { width: auto; padding: 7px 13px; font-size: 13px; }
+    .btn-row { flex-direction: column; gap: 8px; }
+    .btn-row .btn-sm { width: auto; align-self: flex-start; }
+
+    /* Resultados */
+    .result-box { padding: 14px 12px; }
+    .result-row { font-size: 13px; flex-wrap: wrap; gap: 2px; }
+    .result-row .value { font-size: 13px; }
+    .result-total .label { font-size: 14px; }
+    .result-total .value { font-size: 16px; }
+
+    /* Causas */
+    .causa-header { flex-wrap: wrap; gap: 6px; }
+    .causa-meta { gap: 8px; }
+
+    /* Toggles */
+    .toggle-group { flex-wrap: wrap; gap: 8px; }
+
+    /* Modal */
+    .modal { padding: 18px 14px; }
+    .modal-footer { flex-direction: column-reverse; }
+    .modal-footer .btn { width: 100%; justify-content: center; }
+
+    /* Gate */
+    .gate-box { padding: 20px 16px; }
+    .gate-box h2 { font-size: 18px; }
+
+    /* Multas */
+    .multa-valor { font-size: 14px; }
+
+    /* Sesión bar */
+    .session-bar { flex-wrap: wrap; gap: 6px; font-size: 12px; }
+
+    /* Trivia */
+    #trivia-opciones { display: flex; flex-direction: column; gap: 10px; }
+    #trivia-opciones button { width: 100%; text-align: left; padding: 12px 14px; font-size: 14px; }
+
+    /* Plazos */
+    .plazo-result { padding: 12px; }
+    .plazo-result .fecha { font-size: 14px; }
+
+    /* LRT grid */
+    #lrt-section .card-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Pantallas medianas (tablets) */
+  @media (max-width: 860px) and (min-width: 641px) {
+    .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex-shrink: 0; }
+    main { padding: 18px 14px; }
+    .card-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">⚖️</span>
+  <div>
+    <h1>Tu Abogado al Toque</h1>
+    <div style="font-size:11px; opacity:0.75; margin-top:2px; letter-spacing:0.3px;">
+      Dr. Mario Martín Manulis &nbsp;·&nbsp;
+      <a href="https://wa.me/5491144496992" target="_blank" style="color:#25d366; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+  <span id="fecha-hoy"></span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('liquidacion')">📊 Liquidación Final</div>
+  <div class="tab" onclick="showTab('multas')">⚠️ Multas y Agravantes</div>
+  <div class="tab" onclick="showTab('causas')">📁 Mis Causas</div>
+  <div class="tab" onclick="showTab('plazos')">📅 Plazos</div>
+  <div class="tab" onclick="showTab('lrt')">🏥 LRT</div>
+  <div class="tab" onclick="showTab('trivia')">🎓 Trivia LCT</div>
+</div>
+
+<main>
+
+<!-- =========== LIQUIDACIÓN =========== -->
+<div id="tab-liquidacion" class="section active">
+  <div class="card">
+    <h3><span class="icon">📊</span> Calculadora de Liquidación Final</h3>
+    <div class="card-grid">
+      <div class="form-group">
+        <label>Fecha de Ingreso</label>
+        <input type="date" id="liq-ingreso">
+      </div>
+      <div class="form-group">
+        <label>Fecha de Egreso / Despido</label>
+        <input type="date" id="liq-egreso">
+      </div>
+      <div class="form-group">
+        <label>Mejor Remuneración (mensual bruta $)</label>
+        <input type="number" id="liq-sueldo" placeholder="0.00" min="0" step="100">
+      </div>
+      <div class="form-group">
+        <label>Tope CCT (3x prom. remuneraciones, dejar 0 si no aplica)</label>
+        <input type="number" id="liq-tope" placeholder="0 = sin tope" min="0" step="100">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Egreso</label>
+        <select id="liq-tipo">
+          <option value="despido_sin_causa">Despido sin causa (Art. 245)</option>
+          <option value="despido_indirecto">Despido indirecto (Art. 246)</option>
+          <option value="renuncia">Renuncia (Art. 240)</option>
+          <option value="acuerdo">Acuerdo disolutorio (Art. 241)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>¿Se otorgó preaviso?</label>
+        <select id="liq-preaviso-otorgado">
+          <option value="no">No — calcular sustitutivo</option>
+          <option value="si">Sí — preaviso ya cumplido</option>
+        </select>
+      </div>
+    </div>
+    <hr class="divider">
+    <p class="section-title">Opciones adicionales</p>
+    <div class="card-grid">
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="opt-art15" onchange="toggleArt15()"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Art. 15 Ley 24013 (despido por intimación)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="opt-art1-25323" onchange="toggleArt1_25323()"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Art. 1° Ley 25323 (relación no registrada)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="opt-art2-25323"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Art. 2° Ley 25323 (50% adicional — no pagó en término)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="opt-art80"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Art. 80 LCT (cert. de trabajo — 3 sueldos)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="opt-132bis"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Art. 132 bis LCT (retención aportes)</span>
+      </div>
+    </div>
+    <div id="132bis-meses-wrap" style="display:none; margin-top:10px; max-width:220px;">
+      <div class="form-group">
+        <label>Meses de mora (Art. 132 bis)</label>
+        <input type="number" id="132bis-meses" placeholder="ej: 6" min="1">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcularLiquidacion()">⚙️ Calcular Liquidación</button>
+      <button class="btn btn-outline" onclick="limpiarLiq()">🗑 Limpiar</button>
+    </div>
+  </div>
+
+  <div id="liq-result" style="display:none;" class="card">
+    <h3><span class="icon">💰</span> Resultado de la Liquidación</h3>
+    <div id="liq-result-content"></div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="window.print()">🖨 Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========== MULTAS =========== -->
+<div id="tab-multas" class="section">
+  <div class="card">
+    <h3><span class="icon">⚠️</span> Calculadora de Multas — Ley 24013</h3>
+    <div class="card-grid">
+      <div class="form-group">
+        <label>Remuneración mensual bruta ($)</label>
+        <input type="number" id="m-sueldo" placeholder="0.00" min="0">
+      </div>
+      <div class="form-group">
+        <label>Fecha de ingreso real</label>
+        <input type="date" id="m-ingreso-real">
+      </div>
+      <div class="form-group">
+        <label>Fecha de ingreso registrada</label>
+        <input type="date" id="m-ingreso-reg">
+      </div>
+      <div class="form-group">
+        <label>Fecha de intimación (telegrama)</label>
+        <input type="date" id="m-intima">
+      </div>
+      <div class="form-group">
+        <label>Remuneración registrada (si difiere) ($)</label>
+        <input type="number" id="m-sueldo-reg" placeholder="Igual a bruta si no difiere" min="0">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcularMultas()">⚙️ Calcular Multas</button>
+    </div>
+  </div>
+  <div id="multas-result" style="display:none;"></div>
+
+  <div class="card">
+    <h3><span class="icon">📋</span> Referencia Rápida — Multas Laborales</h3>
+    <div class="multa-block">
+      <h4>Art. 8 Ley 24013 — Relación no registrada</h4>
+      <p>25% de las remuneraciones devengadas desde el inicio hasta la regularización. Requiere intimación previa del trabajador.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 9 Ley 24013 — Fecha de ingreso falsamente registrada</h4>
+      <p>25% de las remuneraciones devengadas entre la fecha real de ingreso y la registrada.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 10 Ley 24013 — Remuneración menor a la real</h4>
+      <p>25% de la diferencia entre la remuneración real y la registrada durante el plazo de la mora.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 15 Ley 24013 — Despido por haber intimado</h4>
+      <p>Indemnización duplicada: Art. 245 + equivalente adicional a la indemnización por antigüedad.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 1° Ley 25323 — Relación no registrada o irregularmente registrada</h4>
+      <p>Duplica la indemnización del Art. 245 LCT. Requiere intimación fehaciente previa al despido.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 2° Ley 25323 — Falta de pago en término</h4>
+      <p>50% adicional sobre indemnizaciones Art. 245 + preaviso + integración si el empleador no paga en término tras intimación.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 80 LCT — Certificado de trabajo</h4>
+      <p>3 meses de remuneración si el empleador no entrega los certificados dentro de los 30 días de intimado. (Res. 360/01 AFIP)</p>
+    </div>
+    <div class="multa-block">
+      <h4>Art. 132 bis LCT — Retención de aportes</h4>
+      <p>Equivalente a 1 sueldo mensual por cada mes o fracción que el empleador retenga aportes sin depositarlos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== CAUSAS =========== -->
+<div id="tab-causas" class="section">
+
+  <!-- GATE: pantalla de acceso -->
+  <div id="causas-gate" class="gate-overlay">
+    <div class="gate-box">
+      <h2>🔒 Mis Causas</h2>
+      <p>Sección privada. Ingrese con su perfil o solicite su código de acceso.</p>
+      <div class="gate-tabs">
+        <button class="gate-tab active" onclick="switchGateTab('profesional')">👨‍⚖️ Profesional</button>
+        <button class="gate-tab" onclick="switchGateTab('cliente')">👤 Soy cliente</button>
+      </div>
+
+      <!-- Panel Profesional -->
+      <div id="gate-panel-profesional">
+        <div class="form-group" style="text-align:left;">
+          <label>PIN de acceso</label>
+          <input type="password" id="gate-pin" class="gate-pin" placeholder="••••" maxlength="8"
+            onkeydown="if(event.key==='Enter') accederAdmin()">
+        </div>
+        <p id="gate-error-admin" class="gate-error">PIN incorrecto. Intente nuevamente.</p>
+        <div class="btn-row" style="justify-content:center; margin-top:14px;">
+          <button class="btn btn-primary" style="width:100%;" onclick="accederAdmin()">🔓 Ingresar</button>
+        </div>
+        <p style="font-size:11px; color:var(--muted); margin-top:12px;">PIN por defecto: <strong>1234</strong> (puede cambiarlo desde el panel)</p>
+      </div>
+
+      <!-- Panel Cliente -->
+      <div id="gate-panel-cliente" style="display:none;">
+        <div class="form-group" style="text-align:left;">
+          <label>Código de acceso</label>
+          <input type="text" id="gate-codigo-cliente" placeholder="Ingrese su código" style="text-transform:uppercase; letter-spacing:3px; font-size:16px; font-weight:700;"
+            onkeydown="if(event.key==='Enter') accederCliente()">
+        </div>
+        <p id="gate-error-cliente" class="gate-error">Código incorrecto o no asignado.</p>
+        <div class="btn-row" style="justify-content:center; margin-top:14px;">
+          <button class="btn btn-primary" style="width:100%;" onclick="accederCliente()">🔓 Ver mi causa</button>
+        </div>
+        <hr class="divider">
+        <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">¿No tiene código? Solicítelo al Dr. Manulis</p>
+        <button class="btn btn-success" style="width:100%;" onclick="solicitarCodigo()">📱 Solicitar código por WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO: visible solo tras autenticación -->
+  <div id="causas-contenido" style="display:none;">
+    <div id="session-bar-causas" class="session-bar">
+      <span id="session-bar-texto">✅ Sesión profesional activa</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" id="btn-cambiar-pin" onclick="abrirCambiarPin()">🔑 Cambiar PIN</button>
+        <button class="btn btn-outline btn-sm" id="btn-config-api" onclick="abrirConfigAPI()">⚙️ Google Sheets</button>
+        <button class="btn btn-danger btn-sm" onclick="cerrarSesionCausas()">🔒 Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">📁</span> Gestión de Causas</h3>
+      <div id="causas-admin-tools" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;">
+        <input type="text" id="causa-buscar" placeholder="🔍 Buscar causa, cliente o juzgado..." style="max-width:320px;" oninput="renderCausas()">
+        <button class="btn btn-success" onclick="abrirNuevaCausa()">+ Nueva Causa</button>
+      </div>
+      <div id="causa-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- =========== PLAZOS =========== -->
+<div id="tab-plazos" class="section">
+  <div class="card">
+    <h3><span class="icon">📅</span> Calculadora de Plazos Procesales y Prescripción</h3>
+    <div class="card-grid">
+      <div class="form-group">
+        <label>Fecha de referencia (hecho / despido / vencimiento)</label>
+        <input type="date" id="plazo-fecha">
+      </div>
+      <div class="form-group">
+        <label>Tipo de plazo</label>
+        <select id="plazo-tipo" onchange="updatePlazoDesc()">
+          <optgroup label="Prescripción">
+            <option value="prescripcion_lct">Prescripción LCT — 2 años (Art. 256)</option>
+            <option value="prescripcion_accidente">Prescripción accidente / enfermedad — 2 años (LRT)</option>
+            <option value="prescripcion_multas">Prescripción Ley 24013 — 2 años</option>
+          </optgroup>
+          <optgroup label="Plazos procesales PBA">
+            <option value="contestacion">Contestación demanda laboral PBA — 10 días hábiles</option>
+            <option value="traslado_prueba">Traslado ofrecimiento de prueba — 5 días hábiles</option>
+            <option value="expresion_agravios">Expresión de agravios — 10 días hábiles</option>
+            <option value="recurso_extraordinario">Recurso extraordinario — 10 días hábiles</option>
+          </optgroup>
+          <optgroup label="Plazos extrajudiciales">
+            <option value="preaviso_pago">Pago de liquidación — 4 días hábiles (Art. 128 LCT)</option>
+            <option value="intima_24013">Respuesta intimación Ley 24013 — 30 días corridos</option>
+            <option value="cert_art80">Entrega certificado Art. 80 LCT — 30 días corridos (desde intimación)</option>
+            <option value="telegrama_respuesta">Respuesta telegrama (plazo convencional) — 2 días hábiles</option>
+            <option value="custom">Plazo personalizado</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group" id="plazo-custom-wrap" style="display:none;">
+        <label>Días del plazo personalizado</label>
+        <input type="number" id="plazo-custom-dias" placeholder="ej: 15" min="1">
+        <div style="display:flex; gap:8px; margin-top:6px; font-size:12px; align-items:center;">
+          <label style="text-transform:none; font-size:12px; font-weight:400;">
+            <input type="radio" name="plazo-tipo-dias" value="habiles" checked> Hábiles
+          </label>
+          <label style="text-transform:none; font-size:12px; font-weight:400;">
+            <input type="radio" name="plazo-tipo-dias" value="corridos"> Corridos
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nombre / Descripción del plazo</label>
+        <input type="text" id="plazo-desc" placeholder="ej: Prescripción de Juan López">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcularPlazo()">📅 Calcular Vencimiento</button>
+      <button class="btn btn-success" onclick="guardarPlazo()">💾 Guardar en agenda</button>
+    </div>
+  </div>
+
+  <div id="plazo-result" style="display:none;" class="card">
+    <h3><span class="icon">⏰</span> Resultado</h3>
+    <div id="plazo-result-content"></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">📆</span> Agenda de Vencimientos</h3>
+    <div id="agenda-list"></div>
+  </div>
+</div>
+
+<!-- =========== LRT =========== -->
+<div id="tab-lrt" class="section">
+  <div class="card">
+    <h3><span class="icon">🏥</span> Calculadora de Indemnizaciones — Ley de Riesgos del Trabajo</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Ley 24.557 · Decreto 1694/09 · Ley 26.773 · Ley 27.348</p>
+    <div class="card-grid">
+      <div class="form-group">
+        <label>Tipo de contingencia</label>
+        <select id="lrt-tipo" onchange="lrtTipoChange()">
+          <option value="ilp_parcial">ILP Parcial y Permanente (Art. 14 inc. b — &lt; 66%)</option>
+          <option value="ilp_total">ILP Total y Permanente (Art. 15 — ≥ 66%)</option>
+          <option value="gran_invalidez">Gran Invalidez (Art. 17 — requiere asistencia permanente)</option>
+          <option value="fallecimiento">Fallecimiento (Art. 18)</option>
+          <option value="ilt">ILT — Incapacidad Laboral Transitoria (Art. 13)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ingreso Base Mensual — IBM ($)</label>
+        <input type="number" id="lrt-ibm" placeholder="Suma rem. últ. 12 meses ÷ 365 × 30,4" min="0" step="100">
+        <small style="font-size:11px;color:var(--muted);">Art. 12 Ley 24.557: total remuneraciones últimos 12 meses / 365 × 30,4</small>
+      </div>
+      <div class="form-group">
+        <label>Edad del trabajador al momento del accidente / denuncia</label>
+        <input type="number" id="lrt-edad" placeholder="ej: 38" min="14" max="65">
+      </div>
+      <div class="form-group" id="lrt-pct-wrap">
+        <label>Porcentaje de incapacidad (%)</label>
+        <input type="number" id="lrt-pct" placeholder="ej: 25" min="1" max="65" step="0.5">
+      </div>
+      <div class="form-group" id="lrt-ilt-wrap" style="display:none;">
+        <label>Días de ILT (baja médica)</label>
+        <input type="number" id="lrt-ilt-dias" placeholder="ej: 90" min="1">
+      </div>
+      <div class="form-group">
+        <label>Coeficiente RIPTE (actualización vigente)</label>
+        <input type="number" id="lrt-ripte" placeholder="1.00 = sin ajuste" min="1" step="0.01" value="1">
+        <small style="font-size:11px;color:var(--muted);">Resolución SRT vigente. Si el IBM ya está actualizado, ingresar 1.</small>
+      </div>
+    </div>
+    <hr class="divider">
+    <p class="section-title">Adicionales y opciones</p>
+    <div class="card-grid">
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="lrt-l26773"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Adicional 20% Ley 26.773 Art. 3° (pago único complementario)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="lrt-itinere"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Accidente in itinere (trayecto al/del trabajo)</span>
+      </div>
+      <div class="toggle-group">
+        <label class="toggle"><input type="checkbox" id="lrt-piso" onchange="document.getElementById('lrt-piso-wrap').style.display=this.checked?'block':'none'"><span class="toggle-slider"></span></label>
+        <span class="toggle-label">Aplicar piso mínimo legal (ingresar valor actualizado)</span>
+      </div>
+    </div>
+    <div id="lrt-piso-wrap" style="display:none;margin-top:10px;max-width:260px;">
+      <div class="form-group">
+        <label>Piso mínimo legal vigente ($)</label>
+        <input type="number" id="lrt-piso-val" placeholder="Verificar Res. SRT vigente" min="0" step="1000">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcularLRT()">⚙️ Calcular Indemnización LRT</button>
+      <button class="btn btn-outline" onclick="limpiarLRT()">🗑 Limpiar</button>
+    </div>
+  </div>
+
+  <div id="lrt-result" style="display:none;" class="card">
+    <h3><span class="icon">💊</span> Resultado LRT</h3>
+    <div id="lrt-result-content"></div>
+    <div class="btn-row"><button class="btn btn-outline" onclick="window.print()">🖨 Imprimir</button></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">📖</span> Referencia de Fórmulas LRT</h3>
+    <div class="multa-block">
+      <h4>ILP Parcial Permanente — Art. 14 inc. b Ley 24.557</h4>
+      <p style="margin-bottom:4px;"><strong>C = 53 × IBM × (%ILP ÷ 100) × (65 ÷ edad)</strong></p>
+      <p>Incapacidad ≥ 1% y &lt; 66%. El resultado se ajusta por RIPTE según Res. SRT vigente. Piso mínimo actualizable por RIPTE.</p>
+    </div>
+    <div class="multa-block">
+      <h4>ILP Total Permanente — Art. 15 Ley 24.557</h4>
+      <p style="margin-bottom:4px;"><strong>C = 53 × IBM × 0,65 × (65 ÷ edad)</strong></p>
+      <p>Incapacidad ≥ 66%. Se abona como pago único. Puede optarse por renta periódica.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Gran Invalidez — Art. 17 Ley 24.557</h4>
+      <p style="margin-bottom:4px;"><strong>C = fórmula ILP Total + prestación mensual complementaria (3 × MOPRE actualizado)</strong></p>
+      <p>El trabajador recibe la indemnización de pago único más una pensión mensual para asistencia de terceros.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Fallecimiento — Art. 18 Ley 24.557</h4>
+      <p style="margin-bottom:4px;"><strong>C = 53 × IBM × 0,65 × (65 ÷ edad)</strong></p>
+      <p>Misma fórmula que ILP Total. Beneficiarios: cónyuge/conviviente, hijos &lt; 21 años, ascendientes a cargo.</p>
+    </div>
+    <div class="multa-block">
+      <h4>Adicional Ley 26.773 Art. 3° — Pago único complementario</h4>
+      <p>El <strong>20%</strong> adicional sobre el capital indemnizatorio cubre daños no patrimoniales (moral, psíquico, estético). No se acumula con acción civil del Art. 4°.</p>
+    </div>
+    <div class="multa-block">
+      <h4>ILT — Art. 13 Ley 24.557</h4>
+      <p>Durante la baja médica el trabajador percibe el <strong>100% del IBM diario</strong>. Los primeros 10 días en accidente de trabajo son a cargo del empleador; desde el día 11 los cubre la ART.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== TRIVIA =========== -->
+<div id="tab-trivia" class="section">
+  <div class="card" id="trivia-inicio">
+    <h3><span class="icon">🎓</span> Trivia — LCT: Ley 20.744 y sus Reformas</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:18px;">Poné a prueba tus conocimientos sobre los cambios más importantes de la Ley de Contrato de Trabajo, desde el texto original hasta las reformas vigentes, incluyendo Ley 27.742 (Ley Bases 2024).</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
+      <div class="plazo-result ok" style="flex:1;min-width:160px;padding:14px;">
+        <h4>📋 20 preguntas</h4>
+        <p>Artículos clave de la LCT y sus reformas históricas.</p>
+      </div>
+      <div class="plazo-result" style="flex:1;min-width:160px;padding:14px;background:#fff8e1;border-color:#ffe082;">
+        <h4>⚖️ Múltiples reformas</h4>
+        <p>Leyes 21.297, 24.013, 24.465, 25.877, 26.428, 27.555, 27.742 y más.</p>
+      </div>
+      <div class="plazo-result" style="flex:1;min-width:160px;padding:14px;background:#fce4ec;border-color:#f48fb1;">
+        <h4>💡 Con fundamento</h4>
+        <p>Cada respuesta incluye el artículo y la ley de referencia.</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="font-size:15px;padding:12px 28px;" onclick="iniciarTrivia()">▶ Comenzar Trivia</button>
+  </div>
+
+  <div id="trivia-juego" style="display:none;" class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:13px;font-weight:700;color:var(--primary);" id="trivia-contador">Pregunta 1 de 20</span>
+      <span style="font-size:13px;font-weight:700;color:var(--success);" id="trivia-puntaje-header">✅ 0 correctas</span>
+    </div>
+    <div style="background:var(--border);border-radius:4px;height:7px;margin-bottom:18px;">
+      <div id="trivia-barra" style="background:var(--accent);height:7px;border-radius:4px;width:5%;transition:width 0.4s;"></div>
+    </div>
+    <p id="trivia-categoria" style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;"></p>
+    <h3 id="trivia-pregunta" style="font-size:15px;font-weight:700;color:var(--text);line-height:1.55;margin-bottom:18px;"></h3>
+    <div id="trivia-opciones" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div id="trivia-feedback" style="display:none;margin-top:16px;padding:14px;border-radius:8px;font-size:13px;line-height:1.5;"></div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button id="trivia-btn-siguiente" class="btn btn-primary" style="display:none;" onclick="siguientePregunta()">Siguiente pregunta →</button>
+    </div>
+  </div>
+
+  <div id="trivia-fin" style="display:none;" class="card" style="text-align:center;">
+    <div style="text-align:center;padding:10px 0;">
+      <div id="trivia-resultado-badge" style="font-size:52px;margin-bottom:12px;"></div>
+      <h3 id="trivia-resultado-titulo" style="font-size:20px;margin-bottom:8px;color:var(--primary);"></h3>
+      <p id="trivia-resultado-texto" style="font-size:15px;color:var(--muted);margin-bottom:20px;"></p>
+      <div id="trivia-score-detalle" style="margin-bottom:24px;"></div>
+      <button class="btn btn-primary" style="font-size:15px;padding:12px 28px;" onclick="iniciarTrivia()">🔄 Jugar de nuevo</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- MODAL CONFIG GOOGLE SHEETS -->
+<div id="modal-config-api" class="modal-overlay">
+  <div class="modal" style="max-width:500px;">
+    <h3>⚙️ Vincular Google Sheets</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Las causas se guardarán en su planilla de Google y serán accesibles desde cualquier dispositivo.</p>
+    <div class="form-group">
+      <label>URL del Web App (Google Apps Script)</label>
+      <input type="text" id="config-api-url" placeholder="https://script.google.com/macros/s/..." style="font-size:12px;">
+      <p style="font-size:11px;color:var(--muted);margin-top:4px;">Obtenga esta URL al desplegar el script CausasAPI.gs en su Google Drive.</p>
+    </div>
+    <div id="config-api-status" style="display:none;font-size:13px;margin-bottom:12px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('modal-config-api').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarConfigAPI()">💾 Guardar y conectar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA CAUSA -->
+<div id="modal-causa" class="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-causa-title">📁 Nueva Causa</h3>
+    <div class="card-grid">
+      <div class="form-group">
+        <label>Carátula / Autos</label>
+        <input type="text" id="nc-caratula" placeholder="López, Juan c/ Empresa S.A.">
+      </div>
+      <div class="form-group">
+        <label>N° de Expediente</label>
+        <input type="text" id="nc-expediente" placeholder="Ej: 35.421/2025">
+      </div>
+      <div class="form-group">
+        <label>Juzgado / Tribunal</label>
+        <input type="text" id="nc-juzgado" placeholder="Ej: Juzgado del Trabajo N°3 La Plata">
+      </div>
+      <div class="form-group">
+        <label>Cliente</label>
+        <input type="text" id="nc-cliente" placeholder="Nombre del cliente">
+      </div>
+      <div class="form-group">
+        <label>Parte contraria</label>
+        <input type="text" id="nc-contraria" placeholder="Empresa / empleador">
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select id="nc-estado">
+          <option value="active">Activa</option>
+          <option value="pending">En trámite</option>
+          <option value="urgent">Urgente</option>
+          <option value="closed">Cerrada</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fecha de inicio</label>
+        <input type="date" id="nc-fecha">
+      </div>
+      <div class="form-group">
+        <label>Monto reclamado ($)</label>
+        <input type="number" id="nc-monto" placeholder="0.00" min="0">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:12px;">
+      <label>Código de acceso del cliente (opcional)</label>
+      <input type="text" id="nc-codigo" placeholder="Ej: MAR2025" style="text-transform:uppercase; letter-spacing:2px; font-weight:700;"
+        oninput="this.value=this.value.toUpperCase()">
+      <small style="color:var(--muted); font-size:11px;">El cliente usará este código para consultar su causa.</small>
+    </div>
+    <div class="form-group" style="margin-top:10px;">
+      <label>Notas / Próximos pasos</label>
+      <textarea id="nc-notas" placeholder="Ej: Próxima audiencia 15/04, pendiente pericial contable..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-success" onclick="guardarCausa()">💾 Guardar Causa</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// UTILS
+// ============================================================
+const fmt = n => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(n);
+const fmtFecha = d => d.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+const fmtFechaCorta = d => d.toLocaleDateString('es-AR');
+
+// ============================================================
+// ACCESO A CAUSAS
+// ============================================================
+let causasSession = null; // null | 'admin' | { tipo:'cliente', causaId }
+
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'causas') {
+    if (causasSession) {
+      mostrarContenidoCausas();
+    } else {
+      document.getElementById('causas-gate').style.display = 'flex';
+      document.getElementById('causas-contenido').style.display = 'none';
+    }
+  }
+  if (name === 'plazos') renderAgenda();
+}
+
+function switchGateTab(tab) {
+  document.querySelectorAll('.gate-tab').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('gate-panel-profesional').style.display = tab === 'profesional' ? 'block' : 'none';
+  document.getElementById('gate-panel-cliente').style.display = tab === 'cliente' ? 'block' : 'none';
+  document.getElementById('gate-error-admin').style.display = 'none';
+  document.getElementById('gate-error-cliente').style.display = 'none';
+}
+
+function accederAdmin() {
+  const pin = document.getElementById('gate-pin').value;
+  const pinGuardado = localStorage.getItem('laborapp_pin') || '1234';
+  if (pin === pinGuardado) {
+    causasSession = 'admin';
+    document.getElementById('gate-pin').value = '';
+    document.getElementById('gate-error-admin').style.display = 'none';
+    mostrarContenidoCausas();
+  } else {
+    document.getElementById('gate-error-admin').style.display = 'block';
+    document.getElementById('gate-pin').focus();
+  }
+}
+
+async function accederCliente() {
+  const codigo = document.getElementById('gate-codigo-cliente').value.trim().toUpperCase();
+  if (!codigo) return;
+  const btn = document.querySelector('#gate-panel-cliente .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Verificando...'; }
+  const url = getSheetsUrl();
+  if (url) {
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      if (json.success) causas = json.data.map(c => ({ ...c, id: Number(c.id) || c.id, monto: Number(c.monto) || 0 }));
+    } catch (e) { /* usa causas en memoria */ }
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '🔓 Ver mi causa'; }
+  const causa = causas.find(c => c.codigoCliente && c.codigoCliente.toUpperCase() === codigo);
+  if (causa) {
+    causasSession = { tipo: 'cliente', causaId: causa.id };
+    document.getElementById('gate-codigo-cliente').value = '';
+    document.getElementById('gate-error-cliente').style.display = 'none';
+    mostrarContenidoCausas();
+  } else {
+    document.getElementById('gate-error-cliente').style.display = 'block';
+  }
+}
+
+function mostrarContenidoCausas() {
+  document.getElementById('causas-gate').style.display = 'none';
+  document.getElementById('causas-contenido').style.display = 'block';
+  const esAdmin = causasSession === 'admin';
+  const bar = document.getElementById('session-bar-causas');
+  bar.className = 'session-bar' + (esAdmin ? '' : ' cliente');
+  document.getElementById('session-bar-texto').textContent = esAdmin
+    ? '✅ Sesión profesional activa — Dr. Mario Martín Manulis'
+    : '👤 Vista de cliente — solo su causa';
+  document.getElementById('btn-cambiar-pin').style.display = esAdmin ? 'inline-flex' : 'none';
+  document.getElementById('btn-config-api').style.display = esAdmin ? 'inline-flex' : 'none';
+  document.getElementById('causas-admin-tools').style.display = esAdmin ? 'flex' : 'none';
+  loadCausasFromAPI();
+}
+
+function cerrarSesionCausas() {
+  causasSession = null;
+  document.getElementById('causas-gate').style.display = 'flex';
+  document.getElementById('causas-contenido').style.display = 'none';
+  document.getElementById('gate-pin').value = '';
+}
+
+function solicitarCodigo() {
+  const nombre = prompt('Ingrese su nombre completo para enviar la solicitud:');
+  if (!nombre) return;
+  const msg = encodeURIComponent(`Hola Dr. Manulis, soy ${nombre.trim()} y quisiera solicitar mi código de acceso para consultar el estado de mi causa. Muchas gracias.`);
+  window.open(`https://wa.me/5491144496992?text=${msg}`, '_blank');
+}
+
+function abrirCambiarPin() {
+  const actual = prompt('Ingrese el PIN actual:');
+  if (actual !== (localStorage.getItem('laborapp_pin') || '1234')) {
+    alert('PIN incorrecto.'); return;
+  }
+  const nuevo = prompt('Ingrese el nuevo PIN (mínimo 4 caracteres):');
+  if (!nuevo || nuevo.length < 4) { alert('PIN demasiado corto.'); return; }
+  const confirmar = prompt('Confirme el nuevo PIN:');
+  if (nuevo !== confirmar) { alert('Los PINs no coinciden.'); return; }
+  localStorage.setItem('laborapp_pin', nuevo);
+  alert('✅ PIN actualizado correctamente.');
+}
+
+// Fecha de hoy en header
+const hoy = new Date();
+document.getElementById('fecha-hoy').textContent = fmtFecha(hoy);
+
+// ============================================================
+// LIQUIDACIÓN FINAL
+// ============================================================
+function toggleArt15() {
+  const v = document.getElementById('opt-art15').checked;
+  // Art 15 implica que fue despedido por intimación - solo aplica en despido sin causa
+}
+function toggleArt1_25323() {
+  // Art 1 25323 ya incluye duplicación
+}
+function limpiarLiq() {
+  ['liq-ingreso','liq-egreso','liq-sueldo','liq-tope'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('liq-tipo').value = 'despido_sin_causa';
+  document.getElementById('liq-preaviso-otorgado').value = 'no';
+  ['opt-art15','opt-art1-25323','opt-art2-25323','opt-art80','opt-132bis'].forEach(id => { document.getElementById(id).checked = false; });
+  document.getElementById('132bis-meses-wrap').style.display = 'none';
+  document.getElementById('liq-result').style.display = 'none';
+}
+document.getElementById('opt-132bis').addEventListener('change', function() {
+  document.getElementById('132bis-meses-wrap').style.display = this.checked ? 'block' : 'none';
+});
+
+function diasVacaciones(anios) {
+  if (anios < 5) return 14;
+  if (anios < 10) return 21;
+  if (anios < 20) return 28;
+  return 35;
+}
+
+function calcularAntiguedad(ingreso, egreso) {
+  let anios = egreso.getFullYear() - ingreso.getFullYear();
+  let meses = egreso.getMonth() - ingreso.getMonth();
+  let dias = egreso.getDate() - ingreso.getDate();
+  if (dias < 0) { meses--; }
+  if (meses < 0) { anios--; meses += 12; }
+  // Fracción > 3 meses cuenta como un año
+  const fraccion = meses + (dias < 0 ? -1 : (dias >= 0 ? 0 : 0));
+  const fraccionMeses = ((egreso - new Date(ingreso.getFullYear() + anios, ingreso.getMonth(), ingreso.getDate())) / (1000*60*60*24*30.44));
+  let aniosCalc = anios + (fraccionMeses > 3 ? 1 : 0);
+  if (aniosCalc < 1) aniosCalc = 1; // mínimo 1 año para indemnización (o 2 meses si < 1 año)
+  return { anios, meses, fraccionMeses, aniosCalc };
+}
+
+function calcularSAC(sueldo, fechaInicioSemestre, egreso) {
+  const totalDias = (egreso - fechaInicioSemestre) / (1000*60*60*24);
+  // Días del semestre
+  const mes = egreso.getMonth();
+  let inicioSem, finSem;
+  if (mes < 6) { // 1er semestre: ene-jun
+    inicioSem = new Date(egreso.getFullYear(), 0, 1);
+    finSem = new Date(egreso.getFullYear(), 5, 30);
+  } else { // 2do semestre: jul-dic
+    inicioSem = new Date(egreso.getFullYear(), 6, 1);
+    finSem = new Date(egreso.getFullYear(), 11, 31);
+  }
+  const diasSemestre = (finSem - inicioSem) / (1000*60*60*24) + 1;
+  const diasTrabajados = (egreso - inicioSem) / (1000*60*60*24) + 1;
+  return (sueldo / 12) * (diasTrabajados / diasSemestre) * 6;
+}
+
+function calcularLiquidacion() {
+  const ingresoVal = document.getElementById('liq-ingreso').value;
+  const egresoVal = document.getElementById('liq-egreso').value;
+  const sueldoVal = parseFloat(document.getElementById('liq-sueldo').value) || 0;
+  const topeVal = parseFloat(document.getElementById('liq-tope').value) || 0;
+  const tipo = document.getElementById('liq-tipo').value;
+  const preAvisoDado = document.getElementById('liq-preaviso-otorgado').value === 'si';
+
+  if (!ingresoVal || !egresoVal || !sueldoVal) {
+    alert('Complete fecha de ingreso, egreso y remuneración.');
+    return;
+  }
+
+  const ingreso = new Date(ingresoVal + 'T12:00:00');
+  const egreso = new Date(egresoVal + 'T12:00:00');
+
+  if (egreso <= ingreso) { alert('La fecha de egreso debe ser posterior a la de ingreso.'); return; }
+
+  const { anios, meses, fraccionMeses, aniosCalc } = calcularAntiguedad(ingreso, egreso);
+  const esDespido = tipo === 'despido_sin_causa' || tipo === 'despido_indirecto';
+
+  // Base de cálculo con tope
+  let base = sueldoVal;
+  if (topeVal > 0) base = Math.min(sueldoVal, topeVal);
+
+  const items = [];
+  let totalGral = 0;
+
+  // ------ Días trabajados del mes ------
+  const diaEgreso = egreso.getDate();
+  const valorDiario = sueldoVal / 30;
+  const diasTrabajadosMes = diaEgreso - 1;
+  if (diasTrabajadosMes > 0) {
+    const v = valorDiario * diasTrabajadosMes;
+    items.push({ label: `Días trabajados del mes (${diasTrabajadosMes} días × ${fmt(valorDiario)})`, value: v, ref: 'Art. 128 LCT' });
+    totalGral += v;
+  }
+
+  if (esDespido) {
+    // ------ Indemnización Art. 245 ------
+    let indemnizacion = base * aniosCalc;
+    const minimoIndemnizacion = base * 2; // mínimo 2 meses si antigüedad < 1 año real
+    if (anios < 1) indemnizacion = Math.max(indemnizacion, minimoIndemnizacion);
+    indemnizacion = Math.max(indemnizacion, base); // mínimo 1 sueldo siempre
+
+    // Art. 1 Ley 25323: duplica
+    const art1_25323 = document.getElementById('opt-art1-25323').checked;
+    if (art1_25323) indemnizacion = indemnizacion * 2;
+
+    items.push({
+      label: `Indemnización antigüedad — ${aniosCalc} año(s)${art1_25323 ? ' × 2 (Art. 1° L. 25323)' : ''} (base: ${fmt(base)})`,
+      value: indemnizacion,
+      ref: art1_25323 ? 'Art. 245 LCT + Art. 1° Ley 25323' : 'Art. 245 LCT'
+    });
+    totalGral += indemnizacion;
+
+    // Art. 15 Ley 24013: + equivalente a indemnización
+    const art15 = document.getElementById('opt-art15').checked;
+    if (art15) {
+      const v15 = base * aniosCalc;
+      items.push({ label: `Multa Art. 15 Ley 24013 (+ equivalente ind. por despido por intimación)`, value: v15, ref: 'Art. 15 Ley 24013' });
+      totalGral += v15;
+    }
+
+    // ------ Preaviso ------
+    if (!preAvisoDado) {
+      let mesesPre = anios >= 5 ? 2 : (fraccionMeses >= 3 || anios >= 1 ? 1 : 0.5);
+      const valorPre = sueldoVal * mesesPre;
+      const sacPre = valorPre / 12;
+      items.push({ label: `Preaviso sustitutivo (${mesesPre === 0.5 ? '15 días' : mesesPre + ' mes(es)'})`, value: valorPre, ref: 'Art. 232 LCT' });
+      items.push({ label: `SAC sobre preaviso`, value: sacPre, ref: 'Art. 123 LCT' });
+      totalGral += valorPre + sacPre;
+
+      // ------ Integración mes de despido ------
+      const ultimoDiaMes = new Date(egreso.getFullYear(), egreso.getMonth() + 1, 0).getDate();
+      const diasInteg = ultimoDiaMes - diaEgreso;
+      if (diasInteg > 0) {
+        const vInteg = valorDiario * diasInteg;
+        const sacInteg = vInteg / 12;
+        items.push({ label: `Integración mes de despido (${diasInteg} días)`, value: vInteg, ref: 'Art. 233 LCT' });
+        items.push({ label: `SAC sobre integración`, value: sacInteg, ref: 'Art. 123 LCT' });
+        totalGral += vInteg + sacInteg;
+      }
+    }
+
+    // Art. 2 Ley 25323
+    const art2_25323 = document.getElementById('opt-art2-25323').checked;
+    if (art2_25323) {
+      const base245 = base * aniosCalc;
+      let mesesPre2 = anios >= 5 ? 2 : 1;
+      const baseArt2 = (art1_25323 ? base245 * 2 : base245) + (preAvisoDado ? 0 : sueldoVal * mesesPre2);
+      const v2 = baseArt2 * 0.5;
+      items.push({ label: `Multa Art. 2° Ley 25323 (50% sobre ind. + preaviso)`, value: v2, ref: 'Art. 2° Ley 25323' });
+      totalGral += v2;
+    }
+  }
+
+  // ------ SAC proporcional ------
+  const mesEgreso = egreso.getMonth();
+  const inicioSem = mesEgreso < 6
+    ? new Date(egreso.getFullYear(), 0, 1)
+    : new Date(egreso.getFullYear(), 6, 1);
+  const finSem = mesEgreso < 6
+    ? new Date(egreso.getFullYear(), 5, 30)
+    : new Date(egreso.getFullYear(), 11, 31);
+  const totalDiasSem = (finSem - inicioSem) / (1000*60*60*24) + 1;
+  const diasEnSem = (egreso - inicioSem) / (1000*60*60*24) + 1;
+  const sacProp = (sueldoVal / 12) * (diasEnSem / totalDiasSem) * 6;
+  items.push({ label: `SAC proporcional (${diasEnSem} días del semestre)`, value: sacProp, ref: 'Art. 123 LCT' });
+  totalGral += sacProp;
+
+  // ------ Vacaciones proporcionales ------
+  const dvac = diasVacaciones(anios);
+  const inicioAnio = new Date(egreso.getFullYear(), 0, 1);
+  const diasAnio = egreso.getFullYear() % 4 === 0 ? 366 : 365;
+  const diasTranscurridos = Math.floor((egreso - inicioAnio) / (1000*60*60*24)) + 1;
+  const vacProp = Math.floor(dvac * diasTranscurridos / diasAnio);
+  const valorVac = (sueldoVal / 25) * vacProp;
+  const sacVac = valorVac / 12;
+  items.push({ label: `Vacaciones proporcionales (${vacProp} días — ${dvac} días/año)`, value: valorVac, ref: 'Art. 156 LCT' });
+  items.push({ label: `SAC sobre vacaciones`, value: sacVac, ref: 'Art. 123 LCT' });
+  totalGral += valorVac + sacVac;
+
+  // ------ Art. 80 LCT ------
+  const art80 = document.getElementById('opt-art80').checked;
+  if (art80) {
+    const v80 = sueldoVal * 3;
+    items.push({ label: `Multa Art. 80 LCT (certificado de trabajo — 3 sueldos)`, value: v80, ref: 'Art. 80 LCT' });
+    totalGral += v80;
+  }
+
+  // ------ Art. 132 bis ------
+  const art132 = document.getElementById('opt-132bis').checked;
+  if (art132) {
+    const meses132 = parseInt(document.getElementById('132bis-meses').value) || 1;
+    const v132 = sueldoVal * meses132;
+    items.push({ label: `Multa Art. 132 bis LCT (${meses132} mes(es) de mora en aportes)`, value: v132, ref: 'Art. 132 bis LCT' });
+    totalGral += v132;
+  }
+
+  // ------ Render ------
+  let html = `
+    <div class="result-box">
+      <h4>Detalle de la liquidación — ${tipo === 'despido_sin_causa' ? 'Despido sin causa' : tipo === 'despido_indirecto' ? 'Despido indirecto' : tipo === 'renuncia' ? 'Renuncia' : 'Acuerdo disolutorio'}</h4>
+      <div class="result-row"><span class="label">👤 Antigüedad</span><span class="value">${anios} año(s) y ${Math.floor(fraccionMeses)} mes(es)</span></div>
+      <div class="result-row"><span class="label">📅 Ingreso</span><span class="value">${fmtFechaCorta(ingreso)}</span></div>
+      <div class="result-row"><span class="label">📅 Egreso</span><span class="value">${fmtFechaCorta(egreso)}</span></div>
+      <div class="result-row"><span class="label">💼 Remuneración base</span><span class="value">${fmt(sueldoVal)}</span></div>
+      ${topeVal > 0 ? `<div class="result-row"><span class="label">🔒 Tope CCT aplicado</span><span class="value">${fmt(topeVal)}</span></div>` : ''}
+      <hr class="divider">
+  `;
+  items.forEach(it => {
+    html += `<div class="result-row"><span class="label">${it.label} <small style="opacity:0.65">(${it.ref})</small></span><span class="value">${fmt(it.value)}</span></div>`;
+  });
+  html += `
+      <div class="result-total">
+        <span class="label">💰 TOTAL LIQUIDACIÓN</span>
+        <span class="value">${fmt(totalGral)}</span>
+      </div>
+      <p class="result-note">* Valores estimativos. No incluye honorarios ni costas. Verificar tope Art. 245 con CCT aplicable. Los cálculos de vacaciones usan días hábiles como referencia. Consulte los valores actualizados del SMVM y CCT vigente.</p>
+    </div>`;
+
+  document.getElementById('liq-result-content').innerHTML = html;
+  document.getElementById('liq-result').style.display = 'block';
+  document.getElementById('liq-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ============================================================
+// MULTAS LEY 24013
+// ============================================================
+function calcularMultas() {
+  const sueldo = parseFloat(document.getElementById('m-sueldo').value) || 0;
+  const ingresoReal = document.getElementById('m-ingreso-real').value;
+  const ingresoReg = document.getElementById('m-ingreso-reg').value;
+  const intima = document.getElementById('m-intima').value;
+  const sueldoReg = parseFloat(document.getElementById('m-sueldo-reg').value) || sueldo;
+
+  if (!sueldo) { alert('Ingrese la remuneración mensual.'); return; }
+
+  const resultDiv = document.getElementById('multas-result');
+  let html = '';
+
+  // Art. 8 — relación no registrada
+  if (ingresoReal && intima) {
+    const dReal = new Date(ingresoReal + 'T12:00:00');
+    const dIntima = new Date(intima + 'T12:00:00');
+    const meses = Math.max(1, Math.ceil((dIntima - dReal) / (1000*60*60*24*30)));
+    const base8 = sueldo * meses;
+    const multa8 = base8 * 0.25;
+    html += `<div class="card"><div class="multa-block">
+      <h4>Art. 8 Ley 24013 — Relación no registrada</h4>
+      <p>Remuneraciones devengadas: ${meses} mes(es) × ${fmt(sueldo)} = ${fmt(base8)}</p>
+      <span class="multa-valor">Multa (25%): ${fmt(multa8)}</span>
+    </div></div>`;
+  }
+
+  // Art. 9 — fecha de ingreso
+  if (ingresoReal && ingresoReg) {
+    const dReal = new Date(ingresoReal + 'T12:00:00');
+    const dReg = new Date(ingresoReg + 'T12:00:00');
+    if (dReal < dReg) {
+      const meses9 = Math.max(1, Math.ceil((dReg - dReal) / (1000*60*60*24*30)));
+      const base9 = sueldo * meses9;
+      const multa9 = base9 * 0.25;
+      html += `<div class="card"><div class="multa-block">
+        <h4>Art. 9 Ley 24013 — Fecha de ingreso falsamente registrada</h4>
+        <p>Diferencia: ${meses9} mes(es) × ${fmt(sueldo)} = ${fmt(base9)}</p>
+        <span class="multa-valor">Multa (25%): ${fmt(multa9)}</span>
+      </div></div>`;
+    }
+  }
+
+  // Art. 10 — diferencia de remuneración
+  if (sueldo > sueldoReg && ingresoReg && intima) {
+    const dReg = new Date(ingresoReg + 'T12:00:00');
+    const dIntima = new Date(intima + 'T12:00:00');
+    const meses10 = Math.max(1, Math.ceil((dIntima - dReg) / (1000*60*60*24*30)));
+    const difMensual = sueldo - sueldoReg;
+    const base10 = difMensual * meses10;
+    const multa10 = base10 * 0.25;
+    html += `<div class="card"><div class="multa-block">
+      <h4>Art. 10 Ley 24013 — Remuneración registrada menor a la real</h4>
+      <p>Diferencia mensual: ${fmt(difMensual)} × ${meses10} mes(es) = ${fmt(base10)}</p>
+      <span class="multa-valor">Multa (25%): ${fmt(multa10)}</span>
+    </div></div>`;
+  }
+
+  // Art. 80 siempre calculable
+  const multa80 = sueldo * 3;
+  html += `<div class="card"><div class="multa-block">
+    <h4>Art. 80 LCT — Certificado de trabajo</h4>
+    <p>3 meses de remuneración (requiere intimación previa y 30 días sin entrega)</p>
+    <span class="multa-valor">${fmt(multa80)}</span>
+  </div></div>`;
+
+  if (!html) html = '<div class="card"><p>Complete los campos para calcular multas.</p></div>';
+
+  resultDiv.innerHTML = html;
+  resultDiv.style.display = 'block';
+}
+
+// ============================================================
+// CAUSAS — Google Sheets API
+// ============================================================
+const SHEETS_API_KEY = 'LABORAPP2024';
+let causas = [];
+let editandoCausaId = null;
+
+function getSheetsUrl() {
+  return localStorage.getItem('laborapp_sheets_url') || '';
+}
+
+async function loadCausasFromAPI() {
+  const url = getSheetsUrl();
+  const div = document.getElementById('causa-list');
+  if (!div) return;
+  if (!url) {
+    causas = JSON.parse(localStorage.getItem('laborapp_causas') || '[]');
+    renderCausas();
+    return;
+  }
+  div.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Cargando causas...</p></div>';
+  try {
+    const resp = await fetch(url);
+    const json = await resp.json();
+    if (json.success) {
+      causas = json.data.map(c => ({ ...c, id: Number(c.id) || c.id, monto: Number(c.monto) || 0 }));
+    } else {
+      throw new Error(json.error || 'Error desconocido');
+    }
+  } catch (e) {
+    div.innerHTML = `<div class="empty-state"><div class="icon">❌</div><p>Error al cargar: ${e.message}.<br><small>Verifique la URL en ⚙️ Google Sheets.</small></p></div>`;
+    return;
+  }
+  renderCausas();
+}
+
+function abrirConfigAPI() {
+  document.getElementById('config-api-url').value = getSheetsUrl();
+  document.getElementById('config-api-status').style.display = 'none';
+  document.getElementById('modal-config-api').classList.add('open');
+}
+
+async function guardarConfigAPI() {
+  const url = document.getElementById('config-api-url').value.trim();
+  const status = document.getElementById('config-api-status');
+  if (url && !url.startsWith('https://script.google.com')) {
+    status.style.display = 'block';
+    status.style.color = 'var(--danger)';
+    status.textContent = '❌ La URL debe ser de Google Apps Script (https://script.google.com/...)';
+    return;
+  }
+  localStorage.setItem('laborapp_sheets_url', url);
+  if (url) {
+    status.style.display = 'block';
+    status.style.color = 'var(--muted)';
+    status.textContent = '⏳ Probando conexión...';
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      if (json.success) {
+        status.style.color = 'var(--success)';
+        status.textContent = `✅ Conexión exitosa. ${json.data.length} causa(s) encontrada(s).`;
+        causas = json.data.map(c => ({ ...c, id: Number(c.id) || c.id, monto: Number(c.monto) || 0 }));
+        setTimeout(() => {
+          document.getElementById('modal-config-api').classList.remove('open');
+          renderCausas();
+        }, 1500);
+      } else {
+        throw new Error(json.error);
+      }
+    } catch (e) {
+      status.style.color = 'var(--danger)';
+      status.textContent = '❌ No se pudo conectar: ' + e.message;
+    }
+  } else {
+    document.getElementById('modal-config-api').classList.remove('open');
+    causas = JSON.parse(localStorage.getItem('laborapp_causas') || '[]');
+    renderCausas();
+  }
+}
+
+function abrirNuevaCausa() {
+  editandoCausaId = null;
+  document.getElementById('modal-causa-title').textContent = '📁 Nueva Causa';
+  ['nc-caratula','nc-expediente','nc-juzgado','nc-cliente','nc-contraria','nc-notas','nc-codigo'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nc-estado').value = 'active';
+  document.getElementById('nc-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('nc-monto').value = '';
+  document.getElementById('modal-causa').classList.add('open');
+}
+
+function cerrarModal() {
+  document.getElementById('modal-causa').classList.remove('open');
+}
+
+async function guardarCausa() {
+  const caratula = document.getElementById('nc-caratula').value.trim();
+  if (!caratula) { alert('Ingrese la carátula de la causa.'); return; }
+  const causa = {
+    id: editandoCausaId || Date.now(),
+    caratula,
+    expediente: document.getElementById('nc-expediente').value.trim(),
+    juzgado: document.getElementById('nc-juzgado').value.trim(),
+    cliente: document.getElementById('nc-cliente').value.trim(),
+    contraria: document.getElementById('nc-contraria').value.trim(),
+    estado: document.getElementById('nc-estado').value,
+    fecha: document.getElementById('nc-fecha').value,
+    monto: parseFloat(document.getElementById('nc-monto').value) || 0,
+    codigoCliente: document.getElementById('nc-codigo').value.trim().toUpperCase(),
+    notas: document.getElementById('nc-notas').value.trim(),
+  };
+  const url = getSheetsUrl();
+  if (url) {
+    const action = editandoCausaId ? 'update' : 'create';
+    try {
+      const resp = await fetch(url, { method: 'POST', body: JSON.stringify({ key: SHEETS_API_KEY, action, causa }) });
+      const json = await resp.json();
+      if (!json.success) throw new Error(json.error);
+    } catch (e) { alert('Error al guardar: ' + e.message); return; }
+    cerrarModal();
+    await loadCausasFromAPI();
+  } else {
+    if (editandoCausaId) {
+      const idx = causas.findIndex(c => c.id === editandoCausaId);
+      if (idx >= 0) causas[idx] = causa;
+    } else {
+      causas.unshift(causa);
+    }
+    localStorage.setItem('laborapp_causas', JSON.stringify(causas));
+    cerrarModal();
+    renderCausas();
+  }
+}
+
+function editarCausa(id) {
+  const c = causas.find(x => x.id === id);
+  if (!c) return;
+  editandoCausaId = id;
+  document.getElementById('modal-causa-title').textContent = '✏️ Editar Causa';
+  document.getElementById('nc-caratula').value = c.caratula || '';
+  document.getElementById('nc-expediente').value = c.expediente || '';
+  document.getElementById('nc-juzgado').value = c.juzgado || '';
+  document.getElementById('nc-cliente').value = c.cliente || '';
+  document.getElementById('nc-contraria').value = c.contraria || '';
+  document.getElementById('nc-estado').value = c.estado || 'active';
+  document.getElementById('nc-fecha').value = c.fecha || '';
+  document.getElementById('nc-monto').value = c.monto || '';
+  document.getElementById('nc-codigo').value = c.codigoCliente || '';
+  document.getElementById('nc-notas').value = c.notas || '';
+  document.getElementById('modal-causa').classList.add('open');
+}
+
+async function eliminarCausa(id) {
+  if (!confirm('¿Eliminar esta causa?')) return;
+  const url = getSheetsUrl();
+  if (url) {
+    try {
+      const resp = await fetch(url, { method: 'POST', body: JSON.stringify({ key: SHEETS_API_KEY, action: 'delete', id }) });
+      const json = await resp.json();
+      if (!json.success) throw new Error(json.error);
+    } catch (e) { alert('Error al eliminar: ' + e.message); return; }
+    await loadCausasFromAPI();
+  } else {
+    causas = causas.filter(c => c.id !== id);
+    localStorage.setItem('laborapp_causas', JSON.stringify(causas));
+    renderCausas();
+  }
+}
+
+function renderCausas() {
+  const esAdmin = causasSession === 'admin';
+  const buscar = esAdmin ? (document.getElementById('causa-buscar')?.value || '').toLowerCase() : '';
+  let lista = causas.filter(c =>
+    (c.caratula + c.juzgado + c.cliente + c.expediente + c.contraria).toLowerCase().includes(buscar)
+  );
+  if (!esAdmin && causasSession?.tipo === 'cliente') {
+    lista = lista.filter(c => c.id === causasSession.causaId);
+  }
+  const div = document.getElementById('causa-list');
+  if (!lista.length) {
+    div.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>${buscar ? 'Sin resultados.' : 'No hay causas. Agregue la primera.'}</p></div>`;
+    return;
+  }
+  const estadoBadge = { active: 'badge-active', pending: 'badge-pending', urgent: 'badge-urgent', closed: 'badge-closed' };
+  const estadoLabel = { active: 'Activa', pending: 'En trámite', urgent: '⚡ Urgente', closed: 'Cerrada' };
+  div.innerHTML = '<div class="causa-list">' + lista.map(c => `
+    <div class="causa-item" onclick="editarCausa(${c.id})">
+      <div class="causa-header">
+        <span class="causa-title">${c.caratula}</span>
+        <span class="badge ${estadoBadge[c.estado] || 'badge-active'}">${estadoLabel[c.estado] || c.estado}</span>
+      </div>
+      <div class="causa-meta">
+        ${c.expediente ? `<span>📋 ${c.expediente}</span>` : ''}
+        ${c.juzgado ? `<span>🏛 ${c.juzgado}</span>` : ''}
+        ${c.cliente ? `<span>👤 ${c.cliente}</span>` : ''}
+        ${c.monto ? `<span>💰 ${fmt(c.monto)}</span>` : ''}
+        ${c.fecha ? `<span>📅 ${new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-AR')}</span>` : ''}
+      </div>
+      ${c.notas ? `<div style="font-size:12px;color:var(--muted);white-space:pre-line;margin-top:4px;">${c.notas.substring(0,120)}${c.notas.length > 120 ? '...' : ''}</div>` : ''}
+      ${esAdmin ? `
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center;" onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="editarCausa(${c.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarCausa(${c.id})">🗑 Eliminar</button>
+        ${c.codigoCliente ? `<span style="margin-left:8px;font-size:11px;background:#e3f2fd;color:#1565c0;border-radius:12px;padding:2px 10px;font-weight:700;letter-spacing:2px;">🔑 ${c.codigoCliente}</span>` : '<span style="font-size:11px;color:var(--muted);">Sin código de cliente</span>'}
+      </div>` : `
+      <div style="margin-top:8px;">
+        <span style="font-size:12px;color:var(--accent);">📋 Consulte al Dr. Manulis para más información.</span>
+      </div>`}
+    </div>
+  `).join('') + '</div>';
+}
+
+// ============================================================
+// PLAZOS
+// ============================================================
+let agenda = JSON.parse(localStorage.getItem('laborapp_agenda') || '[]');
+
+function updatePlazoDesc() {
+  const tipo = document.getElementById('plazo-tipo').value;
+  const wrap = document.getElementById('plazo-custom-wrap');
+  const descMap = {
+    prescripcion_lct: 'Prescripción laboral',
+    prescripcion_accidente: 'Prescripción LRT',
+    prescripcion_multas: 'Prescripción Ley 24013',
+    contestacion: 'Contestación de demanda',
+    traslado_prueba: 'Traslado ofrecimiento prueba',
+    expresion_agravios: 'Expresión de agravios',
+    recurso_extraordinario: 'Recurso extraordinario',
+    preaviso_pago: 'Pago de liquidación',
+    intima_24013: 'Respuesta intimación Ley 24013',
+    cert_art80: 'Entrega cert. Art. 80 LCT',
+    telegrama_respuesta: 'Respuesta telegrama',
+  };
+  wrap.style.display = tipo === 'custom' ? 'block' : 'none';
+  if (descMap[tipo]) document.getElementById('plazo-desc').value = descMap[tipo];
+}
+
+function addHabilesArg(fecha, dias) {
+  // Fines de semana únicamente (no incluye feriados nacionales hardcodeados por simplicidad)
+  let d = new Date(fecha);
+  let added = 0;
+  while (added < dias) {
+    d.setDate(d.getDate() + 1);
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) added++;
+  }
+  return d;
+}
+
+function addMeses(fecha, meses) {
+  const d = new Date(fecha);
+  d.setMonth(d.getMonth() + meses);
+  return d;
+}
+
+function calcularPlazo() {
+  const fechaVal = document.getElementById('plazo-fecha').value;
+  const tipo = document.getElementById('plazo-tipo').value;
+  if (!fechaVal) { alert('Seleccione una fecha de referencia.'); return; }
+
+  const fechaBase = new Date(fechaVal + 'T12:00:00');
+  let fechaVto, descripcion;
+
+  switch (tipo) {
+    case 'prescripcion_lct':
+    case 'prescripcion_accidente':
+    case 'prescripcion_multas':
+      fechaVto = addMeses(fechaBase, 24);
+      descripcion = '2 años (prescripción bienal)';
+      break;
+    case 'contestacion':
+    case 'expresion_agravios':
+    case 'recurso_extraordinario':
+      fechaVto = addHabilesArg(fechaBase, 10);
+      descripcion = '10 días hábiles';
+      break;
+    case 'traslado_prueba':
+      fechaVto = addHabilesArg(fechaBase, 5);
+      descripcion = '5 días hábiles';
+      break;
+    case 'preaviso_pago':
+      fechaVto = addHabilesArg(fechaBase, 4);
+      descripcion = '4 días hábiles';
+      break;
+    case 'intima_24013':
+    case 'cert_art80':
+      fechaVto = new Date(fechaBase);
+      fechaVto.setDate(fechaVto.getDate() + 30);
+      descripcion = '30 días corridos';
+      break;
+    case 'telegrama_respuesta':
+      fechaVto = addHabilesArg(fechaBase, 2);
+      descripcion = '2 días hábiles';
+      break;
+    case 'custom': {
+      const dias = parseInt(document.getElementById('plazo-custom-dias').value) || 0;
+      const tipoC = document.querySelector('input[name="plazo-tipo-dias"]:checked').value;
+      if (!dias) { alert('Ingrese la cantidad de días.'); return; }
+      fechaVto = tipoC === 'habiles' ? addHabilesArg(fechaBase, dias) : (() => { const d = new Date(fechaBase); d.setDate(d.getDate() + dias); return d; })();
+      descripcion = `${dias} día(s) ${tipoC}`;
+      break;
+    }
+  }
+
+  const diasRestantes = Math.ceil((fechaVto - new Date()) / (1000*60*60*24));
+  const vencido = diasRestantes < 0;
+  const urgente = !vencido && diasRestantes <= 10;
+
+  let clase = vencido ? 'vencido' : urgente ? '' : 'ok';
+  let estado = vencido ? '❌ VENCIDO' : urgente ? `⚠️ Vence en ${diasRestantes} día(s)` : `✅ Faltan ${diasRestantes} días`;
+
+  const resContent = `
+    <div class="plazo-result ${clase}">
+      <h4>${document.getElementById('plazo-desc').value || descripcion}</h4>
+      <p>Fecha base: <strong>${fmtFechaCorta(fechaBase)}</strong> · Plazo: <strong>${descripcion}</strong></p>
+      <p class="fecha">Vencimiento: ${fmtFecha(fechaVto)}</p>
+      <p style="margin-top:8px; font-weight:600;">${estado}</p>
+    </div>`;
+
+  document.getElementById('plazo-result-content').innerHTML = resContent;
+  document.getElementById('plazo-result').style.display = 'block';
+
+  // Guardar para uso en guardarPlazo
+  window._ultimoPlazo = { fechaVto, descripcion, diasRestantes };
+}
+
+function guardarPlazo() {
+  if (!window._ultimoPlazo) { calcularPlazo(); }
+  if (!window._ultimoPlazo) return;
+  const desc = document.getElementById('plazo-desc').value.trim() || window._ultimoPlazo.descripcion;
+  agenda.push({
+    id: Date.now(),
+    desc,
+    fechaVto: window._ultimoPlazo.fechaVto.toISOString(),
+    fechaBase: document.getElementById('plazo-fecha').value,
+  });
+  localStorage.setItem('laborapp_agenda', JSON.stringify(agenda));
+  renderAgenda();
+  alert('Plazo guardado en agenda.');
+}
+
+function eliminarPlazo(id) {
+  agenda = agenda.filter(a => a.id !== id);
+  localStorage.setItem('laborapp_agenda', JSON.stringify(agenda));
+  renderAgenda();
+}
+
+function renderAgenda() {
+  const div = document.getElementById('agenda-list');
+  if (!agenda.length) {
+    div.innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>No hay vencimientos guardados.</p></div>';
+    return;
+  }
+  const sorted = [...agenda].sort((a, b) => new Date(a.fechaVto) - new Date(b.fechaVto));
+  div.innerHTML = sorted.map(a => {
+    const vto = new Date(a.fechaVto);
+    const dias = Math.ceil((vto - new Date()) / (1000*60*60*24));
+    const vencido = dias < 0;
+    const urgente = !vencido && dias <= 10;
+    const clase = vencido ? 'vencido' : urgente ? '' : 'ok';
+    const label = vencido ? `❌ Venció hace ${Math.abs(dias)} día(s)` : urgente ? `⚠️ Vence en ${dias} día(s)` : `✅ Faltan ${dias} días`;
+    return `<div class="plazo-result ${clase}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+      <div>
+        <h4>${a.desc}</h4>
+        <p class="fecha">${fmtFecha(vto)}</p>
+        <p style="margin-top:4px;font-weight:600;font-size:12px;">${label}</p>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="eliminarPlazo(${a.id})">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// LRT
+// ============================================================
+function lrtTipoChange() {
+  const tipo = document.getElementById('lrt-tipo').value;
+  document.getElementById('lrt-pct-wrap').style.display = (tipo === 'ilp_parcial') ? 'block' : 'none';
+  document.getElementById('lrt-ilt-wrap').style.display  = (tipo === 'ilt') ? 'block' : 'none';
+}
+
+function limpiarLRT() {
+  ['lrt-ibm','lrt-edad','lrt-pct','lrt-ilt-dias','lrt-piso-val'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('lrt-ripte').value = '1';
+  document.getElementById('lrt-tipo').value = 'ilp_parcial';
+  ['lrt-l26773','lrt-itinere','lrt-piso'].forEach(id => document.getElementById(id).checked = false);
+  document.getElementById('lrt-piso-wrap').style.display = 'none';
+  document.getElementById('lrt-result').style.display = 'none';
+  lrtTipoChange();
+}
+
+function calcularLRT() {
+  const tipo   = document.getElementById('lrt-tipo').value;
+  const ibm    = parseFloat(document.getElementById('lrt-ibm').value) || 0;
+  const edad   = parseFloat(document.getElementById('lrt-edad').value) || 0;
+  const pct    = parseFloat(document.getElementById('lrt-pct').value) || 0;
+  const ripte  = parseFloat(document.getElementById('lrt-ripte').value) || 1;
+  const add20  = document.getElementById('lrt-l26773').checked;
+  const itinere= document.getElementById('lrt-itinere').checked;
+  const usaPiso= document.getElementById('lrt-piso').checked;
+  const pisoVal= parseFloat(document.getElementById('lrt-piso-val').value) || 0;
+
+  if (!ibm) { alert('Ingrese el Ingreso Base Mensual (IBM).'); return; }
+  if (tipo !== 'ilt' && !edad) { alert('Ingrese la edad del trabajador.'); return; }
+  if (tipo === 'ilp_parcial' && !pct) { alert('Ingrese el porcentaje de incapacidad.'); return; }
+  if (tipo === 'ilp_parcial' && pct >= 66) { alert('Para incapacidades ≥ 66% seleccione ILP Total.'); return; }
+
+  const items = [];
+  let capital = 0;
+  let formulaStr = '';
+
+  if (tipo === 'ilt') {
+    const dias = parseFloat(document.getElementById('lrt-ilt-dias').value) || 0;
+    if (!dias) { alert('Ingrese los días de ILT.'); return; }
+    const ibmDiario = ibm / 30.4;
+    const totalILT  = ibmDiario * dias;
+    items.push({ label: `IBM diario (${fmt(ibm)} ÷ 30,4)`, value: ibmDiario });
+    items.push({ label: `Prestación ILT — ${dias} días × IBM diario`, value: totalILT });
+    capital = totalILT;
+    formulaStr = 'IBM diario × días de baja';
+  } else {
+    const factorEdad = edad >= 65 ? 1 : (65 / edad);
+    let base = 0;
+
+    if (tipo === 'ilp_parcial') {
+      base = 53 * ibm * (pct / 100) * factorEdad;
+      formulaStr = `53 × ${fmt(ibm)} × ${pct}% × (65÷${edad}) = ${fmt(base)}`;
+    } else {
+      // ILP Total, Gran Invalidez, Fallecimiento → 65% fijo
+      base = 53 * ibm * 0.65 * factorEdad;
+      formulaStr = `53 × ${fmt(ibm)} × 0,65 × (65÷${edad}) = ${fmt(base)}`;
+    }
+
+    const baseRipte = base * ripte;
+    items.push({ label: `Capital base — fórmula principal`, value: base });
+    if (ripte !== 1) items.push({ label: `Ajuste RIPTE (× ${ripte})`, value: baseRipte - base });
+    capital = baseRipte;
+
+    if (add20) {
+      const v20 = capital * 0.20;
+      items.push({ label: `Adicional 20% Ley 26.773 Art. 3°`, value: v20 });
+      capital += v20;
+    }
+
+    if (tipo === 'gran_invalidez') {
+      items.push({ label: `⚠️ Prestación mensual complementaria (3 × MOPRE actualizado — calcular por separado)`, value: 0, nota: true });
+    }
+
+    if (usaPiso && pisoVal > 0 && capital < pisoVal) {
+      items.push({ label: `⬆ Ajuste al piso mínimo legal`, value: pisoVal - capital });
+      capital = pisoVal;
+    }
+  }
+
+  const tipoLabels = {
+    ilp_parcial: `ILP Parcial Permanente — ${pct}% de incapacidad`,
+    ilp_total: 'ILP Total Permanente — ≥ 66%',
+    gran_invalidez: 'Gran Invalidez',
+    fallecimiento: 'Fallecimiento',
+    ilt: 'Incapacidad Laboral Transitoria (ILT)',
+  };
+
+  let html = `<div class="result-box">
+    <h4>${tipoLabels[tipo]}${itinere ? ' · <em>In itinere</em>' : ''}</h4>
+    <div class="result-row"><span class="label">🏦 IBM</span><span class="value">${fmt(ibm)}</span></div>
+    ${tipo !== 'ilt' ? `<div class="result-row"><span class="label">👤 Edad</span><span class="value">${edad} años · factor (65÷${edad}) = ${(65/edad).toFixed(4)}</span></div>` : ''}
+    ${tipo === 'ilp_parcial' ? `<div class="result-row"><span class="label">📊 % Incapacidad</span><span class="value">${pct}%</span></div>` : ''}
+    ${tipo !== 'ilt' ? `<div class="result-row"><span class="label">🧮 Fórmula</span><span class="value" style="font-size:12px;">${formulaStr}</span></div>` : ''}
+    <hr class="divider">`;
+
+  items.forEach(it => {
+    if (it.nota) {
+      html += `<div class="result-row"><span class="label" style="color:var(--warning);">${it.label}</span><span class="value">—</span></div>`;
+    } else {
+      html += `<div class="result-row"><span class="label">${it.label}</span><span class="value">${fmt(it.value)}</span></div>`;
+    }
+  });
+
+  html += `<div class="result-total">
+      <span class="label">💰 INDEMNIZACIÓN TOTAL</span>
+      <span class="value">${fmt(capital)}</span>
+    </div>
+    <p class="result-note">* Valores estimativos sujetos a verificación del IBM real (Art. 12 Ley 24.557), RIPTE vigente y pisos mínimos de la Res. SRT. En Gran Invalidez agregar la prestación mensual complementaria.</p>
+  </div>`;
+
+  document.getElementById('lrt-result-content').innerHTML = html;
+  document.getElementById('lrt-result').style.display = 'block';
+  document.getElementById('lrt-result').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ============================================================
+// TRIVIA
+// ============================================================
+const PREGUNTAS_TRIVIA = [
+  {
+    cat: 'Cuando te despiden',
+    q: '¿Con qué sueldo se calcula la plata que te corresponde cuando el empleador te echa sin motivo?',
+    ops: ['Con el básico del último recibo','Con el mejor sueldo que cobraste en el último año','Con el promedio de los últimos 6 meses','Con el salario mínimo vigente'],
+    ok: 1,
+    exp: 'Para calcular lo que te corresponde cuando te despiden, la ley toma el mejor sueldo que hayas cobrado en el último año — incluyendo horas extra, premios o cualquier adicional que hayas recibido de forma habitual. No alcanza con mirar solo el básico del recibo: se mira lo mejor que cobraste de manera regular.'
+  },
+  {
+    cat: 'Empezar un trabajo nuevo',
+    q: 'Cuando alguien empieza un trabajo nuevo, hay un tiempo de "prueba" en el que cualquiera puede terminar la relación sin indemnización. ¿Cuánto dura ese período desde la ley de 2024?',
+    ops: ['30 días','3 meses','6 meses','No existe ese período en la ley'],
+    ok: 2,
+    exp: 'Desde 2024 (Ley Bases), cuando empezás un trabajo nuevo, los primeros 6 meses son de prueba. Durante ese tiempo, tanto vos como el empleador pueden terminar la relación sin pagar indemnización, aunque sí corresponde avisar con anticipación. Antes de esta reforma, el período de prueba era de solo 3 meses.'
+  },
+  {
+    cat: '¿Hasta cuándo podés reclamar?',
+    q: 'Si el empleador te debe plata del trabajo — sueldos, vacaciones, lo que sea — ¿hasta cuándo podés ir a reclamarlo?',
+    ops: ['Hasta 1 año después de que se generó la deuda','Hasta 2 años después','Hasta 3 años después','Hasta 5 años después'],
+    ok: 1,
+    exp: 'Tenés 2 años para reclamar cualquier deuda laboral. Si ese plazo pasa sin que hagas el reclamo — ya sea por carta documento, telegrama o demanda judicial — perdés el derecho a cobrar. Por eso es muy importante no esperar demasiado cuando el empleador te debe algo.'
+  },
+  {
+    cat: 'Aviso antes del despido',
+    q: 'Alguien lleva más de 5 años trabajando en una empresa y la empresa decide echarlo. ¿Con cuánto tiempo de anticipación debe avisarle?',
+    ops: ['15 días','1 mes','2 meses','3 meses'],
+    ok: 2,
+    exp: 'Cuando alguien lleva más de 5 años en una empresa, el empleador tiene que avisarle con 2 meses de anticipación antes de despedirlo. Si no lo hace, tiene que pagarle esos 2 meses de sueldo como compensación. Para quienes llevan menos de 5 años, el aviso es de 1 mes.'
+  },
+  {
+    cat: 'Vacaciones',
+    q: 'Una persona lleva 8 años trabajando en el mismo lugar. ¿Cuántos días de vacaciones le corresponden por año?',
+    ops: ['14 días','21 días','28 días','35 días'],
+    ok: 1,
+    exp: 'Con 8 años de trabajo, corresponden 21 días de vacaciones. Cuanto más tiempo llevás en un lugar, más días te corresponden: hasta 5 años de antigüedad = 14 días; de 5 a 10 años = 21 días; de 10 a 20 años = 28 días; y con más de 20 años = 35 días.'
+  },
+  {
+    cat: 'El aguinaldo',
+    q: '¿En qué fechas hay que pagar el aguinaldo (la cuota extra de sueldo que reciben todos los trabajadores)?',
+    ops: ['31 de marzo y 30 de septiembre','30 de junio y 31 de diciembre','31 de mayo y 30 de noviembre','30 de abril y 31 de octubre'],
+    ok: 1,
+    exp: 'El aguinaldo se paga en dos partes al año: la primera antes del 30 de junio y la segunda antes del 31 de diciembre. Cada parte equivale a la mitad del mejor sueldo que cobraste en ese semestre. Si te vas antes de esas fechas, te pagan lo que corresponde al tiempo trabajado.'
+  },
+  {
+    cat: 'Trabajar desde casa',
+    q: '¿Qué ley fue la primera en regular el trabajo desde el hogar (home office) en Argentina?',
+    ops: ['Ley 25.877','Ley 26.773','Ley 27.555','Ley 27.742'],
+    ok: 2,
+    exp: 'La Ley 27.555, aprobada en 2020 y en vigencia desde 2021, fue la primera ley argentina que reguló el trabajo desde casa. Establece que la empresa debe dar o pagar las herramientas necesarias para trabajar, compensar los gastos de internet y luz, y respetar el derecho del trabajador a desconectarse fuera de su horario.'
+  },
+  {
+    cat: 'Trabajo en negro',
+    q: '¿Qué ley creó las multas para las empresas que tienen empleados trabajando en negro o con datos falsos en el recibo?',
+    ops: ['La Ley de Contrato de Trabajo de 1974','La ley de convertibilidad de 1991','La Ley de Empleo de 1991 (Ley 24.013)','La ley de emergencia económica de 2002'],
+    ok: 2,
+    exp: 'La Ley 24.013, conocida como Ley de Empleo (1991), fue la que creó las multas para los empleadores que no registran a sus empleados, los anotan con una fecha de entrada más tardía de la real, o les declaran un sueldo menor al que realmente cobran. En cada caso, la multa equivale al 25% de los sueldos que no fueron registrados correctamente.'
+  },
+  {
+    cat: 'Trabajo en negro — despido',
+    q: 'Si alguien trabajó siempre en negro y el empleador lo echa, ¿qué pasa con la plata que le corresponde cobrar?',
+    ops: ['No cobra nada porque no estaba registrado','Cobra igual que cualquier empleado registrado','Cobra el doble de lo que le correspondería si hubiera estado registrado','Solo cobra los últimos 3 meses de sueldo'],
+    ok: 2,
+    exp: 'Si la relación de trabajo no estaba registrada (trabajo en negro) y el empleado es despedido, la indemnización se duplica. Pero para que esto funcione, antes del despido el trabajador tuvo que haberle mandado un telegrama al empleador pidiéndole que lo registrara, y el empleador no lo hizo.'
+  },
+  {
+    cat: 'Certificado de trabajo',
+    q: 'Cuando termina una relación laboral, el empleador tiene que entregar un certificado de trabajo. Si no lo hace tras ser intimado, ¿cuánto tiene que pagar de multa?',
+    ops: ['Lo equivalente a 1 sueldo','Lo equivalente a 2 sueldos','Lo equivalente a 3 sueldos','Lo equivalente a 6 sueldos'],
+    ok: 2,
+    exp: 'Si el empleador no entrega el certificado de trabajo y aportes dentro de los 30 días de que el trabajador lo reclame formalmente (por telegrama), tiene que pagar una multa igual a 3 sueldos. Ese certificado es importante porque sirve para buscar un nuevo trabajo y para tramitar el seguro de desempleo.'
+  },
+  {
+    cat: 'Licencia por maternidad',
+    q: 'Una trabajadora queda embarazada. ¿Cuántos días de licencia paga tiene derecho a tomar?',
+    ops: ['45 días','60 días','90 días','120 días'],
+    ok: 2,
+    exp: 'Una trabajadora tiene derecho a 90 días corridos de licencia por maternidad: 45 días antes del parto y 45 días después. Si quiere, puede optar por tomar solo 30 días antes y así tener 60 días después del nacimiento. Durante todo ese tiempo sigue cobrando su sueldo, pero lo paga la ANSES, no la empresa.'
+  },
+  {
+    cat: 'Nueva forma de cobrar si te echan',
+    q: 'La Ley Bases de 2024 permitió una nueva forma de manejar la indemnización por despido. ¿En qué consiste?',
+    ops: ['Eliminó la indemnización para los contratos nuevos','Redujo a la mitad el monto de la indemnización','Permitió reemplazarla por un fondo de ahorro que el empleador va depositando mes a mes','Duplicó la indemnización para todos los trabajadores'],
+    ok: 2,
+    exp: 'La Ley Bases (2024) permitió que los gremios y las empresas acuerden en paritarias crear un "fondo de cese laboral": en lugar de juntar la plata para pagar una indemnización grande cuando alguien se va, el empleador deposita cada mes un pequeño porcentaje del sueldo en una cuenta del trabajador. Es similar al sistema que ya existe hace años en la industria de la construcción.'
+  },
+  {
+    cat: 'Historia',
+    q: '¿En qué año se aprobó por primera vez la Ley de Contrato de Trabajo en Argentina?',
+    ops: ['1968','1972','1974','1976'],
+    ok: 2,
+    exp: 'La Ley de Contrato de Trabajo fue aprobada en 1974. Era considerada una de las leyes laborales más protectoras de América Latina en ese momento. Sin embargo, en 1976, con la llegada de la dictadura militar, fue modificada profundamente y se le quitaron muchos derechos que protegían a los trabajadores.'
+  },
+  {
+    cat: 'La dictadura y los derechos laborales',
+    q: '¿Qué hizo el gobierno militar en 1976 con la Ley de Contrato de Trabajo?',
+    ops: ['La derogó por completo y la reemplazó por otra ley','Incorporó el trabajo a distancia por primera vez','Le recortó muchos derechos a los trabajadores','Solo actualizó los valores de las multas'],
+    ok: 2,
+    exp: 'En 1976, la dictadura militar modificó duramente la Ley de Contrato de Trabajo. Le quitó derechos importantes a los trabajadores: eliminó el derecho a participar en las ganancias de la empresa, redujo las indemnizaciones y suprimió muchas protecciones que tenía el texto original aprobado en 1974.'
+  },
+  {
+    cat: 'Horas de trabajo',
+    q: '¿Cuántas horas por día y por semana puede trabajar una persona antes de que empiecen a contarse como horas extra?',
+    ops: ['6 horas por día y 36 horas semanales','8 horas por día y 44 horas semanales','8 horas por día y 48 horas semanales','9 horas por día y 48 horas semanales'],
+    ok: 2,
+    exp: 'El límite legal es de 8 horas por día y 48 horas por semana. Todo lo que pase de eso son horas extra y se pagan con un recargo sobre el sueldo. Además, trabajar de noche (entre las 21 hs. y las 6 hs.) tiene un límite menor de 7 horas, porque se considera más desgastante para la salud.'
+  },
+  {
+    cat: 'Si el jefe te trata muy mal',
+    q: 'Un empleado es maltratado o no le pagan el sueldo, y decide renunciar. ¿Puede igual cobrar la indemnización?',
+    ops: ['No, porque fue él quien se fue','Sí, pero solo la mitad','Sí, cobra exactamente lo mismo que si lo hubieran despedido','Solo cobra el aviso previo'],
+    ok: 2,
+    exp: 'Sí. Si el empleador hace algo muy grave — como no pagar el sueldo, maltratar al empleado o cambiar las condiciones de trabajo de mala manera — el trabajador puede "darse por despedido" y tiene derecho a cobrar todo: indemnización por los años trabajados, el aviso previo y los días del mes. A esto la ley lo llama "despido indirecto".'
+  },
+  {
+    cat: 'Aportes a la jubilación',
+    q: 'En cada sueldo te descuentan plata para la jubilación y la obra social. ¿Qué pasa si el empleador te hace ese descuento pero no lo deposita?',
+    ops: ['Nada, es un problema entre la empresa y el Estado','Solo tiene que devolver lo que descontó','Debe pagar una multa igual a un sueldo tuyo por cada mes que no depositó','Quedás dado de baja de la obra social automáticamente'],
+    ok: 2,
+    exp: 'Si el empleador te descuenta los aportes del sueldo pero no los manda a la ANSES o a la obra social, tiene que pagarte una multa equivalente a un sueldo tuyo por cada mes que estuvo sin depositar. Esa multa se va acumulando hasta que finalmente pague lo que debe. Es una de las infracciones más graves que puede cometer un empleador.'
+  },
+  {
+    cat: 'Embarazo y trabajo',
+    q: 'Una empleada queda embarazada y la empresa la despide. ¿Qué protección extra tiene por la ley?',
+    ops: ['Ninguna si la empresa da algún motivo','Cobra el doble del aviso previo','Además de lo normal, cobra el equivalente a un año de sueldo','El despido es nulo y tiene que volver al trabajo'],
+    ok: 2,
+    exp: 'Si una trabajadora es despedida mientras está embarazada (o hasta 7 meses y medio después del parto), la ley da por sentado que la echaron por el embarazo. Además de todo lo que cobran los demás despedidos, tiene derecho a una indemnización extra igual a un año de su sueldo. El empleador solo puede evitar eso si prueba que la despidió por un motivo real y serio, ajeno al embarazo.'
+  },
+  {
+    cat: 'Una reforma que redujo derechos',
+    q: 'En 2004 una ley recortó el período de prueba de 6 meses a 3 meses. ¿Cuál fue esa ley?',
+    ops: ['La que creó el período de prueba en los años \'90','La Ley de Empleo de 1991','La Ley 25.877 de Reforma Laboral','La Ley Bases de 2024'],
+    ok: 2,
+    exp: 'La Ley 25.877, aprobada en 2004, redujo el período de prueba de 6 a 3 meses. Los 6 meses habían sido fijados en los años \'90 como parte de una serie de reformas que redujeron los derechos de los trabajadores. La ley de 2004 revirtió varios de esos cambios y volvió a aplicar la fórmula de indemnización sin los recortes que se habían hecho.'
+  },
+  {
+    cat: 'Trabajar desde casa — desconectarse',
+    q: 'Una persona trabaja desde su casa y a las 11 de la noche el jefe le manda mensajes de trabajo. ¿Está obligada a contestar?',
+    ops: ['Sí, si el jefe lo pide expresamente','Sí, en casos de urgencia siempre','No, la ley le reconoce el derecho a desconectarse fuera de su horario','Depende de lo que diga el contrato individual'],
+    ok: 2,
+    exp: 'No. La ley que regula el trabajo desde casa (Ley 27.555) dice claramente que los trabajadores tienen derecho a "desconectarse" fuera de su horario laboral. El empleador no puede exigirles que contesten mensajes, llamados ni correos fuera de ese horario. Este derecho se llama "derecho a la desconexión digital" y es uno de los más nuevos que incorporó la legislación laboral argentina.'
+  }
+];
+
+let triviaPregs = [];
+let triviaIdx   = 0;
+let triviaPts   = 0;
+let triviaRespondida = false;
+
+function iniciarTrivia() {
+  // Mezclar preguntas
+  triviaPregs = [...PREGUNTAS_TRIVIA].sort(() => Math.random() - 0.5);
+  triviaIdx   = 0;
+  triviaPts   = 0;
+  triviaRespondida = false;
+  document.getElementById('trivia-inicio').style.display = 'none';
+  document.getElementById('trivia-fin').style.display    = 'none';
+  document.getElementById('trivia-juego').style.display  = 'block';
+  mostrarPregunta();
+}
+
+function mostrarPregunta() {
+  const total = triviaPregs.length;
+  const p = triviaPregs[triviaIdx];
+  triviaRespondida = false;
+
+  document.getElementById('trivia-contador').textContent = `Pregunta ${triviaIdx + 1} de ${total}`;
+  document.getElementById('trivia-puntaje-header').textContent = `✅ ${triviaPts} correctas`;
+  document.getElementById('trivia-barra').style.width = `${((triviaIdx) / total) * 100}%`;
+  document.getElementById('trivia-categoria').textContent = p.cat;
+  document.getElementById('trivia-pregunta').textContent = p.q;
+  document.getElementById('trivia-feedback').style.display = 'none';
+  document.getElementById('trivia-btn-siguiente').style.display = 'none';
+
+  // Mezclar opciones manteniendo índice correcto
+  const indices = p.ops.map((_, i) => i).sort(() => Math.random() - 0.5);
+  const optsDiv = document.getElementById('trivia-opciones');
+  optsDiv.innerHTML = indices.map(i => `
+    <button onclick="responder(${i})" style="text-align:left;padding:11px 15px;border:1.5px solid var(--border);
+      border-radius:8px;background:white;cursor:pointer;font-size:13.5px;color:var(--text);
+      transition:all 0.15s;width:100%;" id="opt-${i}"
+      onmouseover="if(!this.dataset.answered)this.style.borderColor='var(--accent)'"
+      onmouseout="if(!this.dataset.answered)this.style.borderColor='var(--border)'">
+      ${p.ops[i]}
+    </button>`).join('');
+}
+
+function responder(idx) {
+  if (triviaRespondida) return;
+  triviaRespondida = true;
+  const p = triviaPregs[triviaIdx];
+  const esCorrecta = idx === p.ok;
+  if (esCorrecta) triviaPts++;
+
+  // Colorear opciones
+  p.ops.forEach((_, i) => {
+    const btn = document.getElementById('opt-' + i);
+    if (!btn) return;
+    btn.dataset.answered = '1';
+    btn.style.cursor = 'default';
+    if (i === p.ok) {
+      btn.style.background = '#e8f5e9'; btn.style.borderColor = '#4caf50'; btn.style.color = '#1b5e20'; btn.style.fontWeight = '700';
+    } else if (i === idx && !esCorrecta) {
+      btn.style.background = '#fde8e8'; btn.style.borderColor = '#e53935'; btn.style.color = '#7f0000';
+    } else {
+      btn.style.opacity = '0.45';
+    }
+  });
+
+  // Feedback
+  const fb = document.getElementById('trivia-feedback');
+  fb.style.display = 'block';
+  fb.style.background = esCorrecta ? '#e8f5e9' : '#fde8e8';
+  fb.style.border     = esCorrecta ? '1px solid #a5d6a7' : '1px solid #ef9a9a';
+  fb.innerHTML = `<strong>${esCorrecta ? '✅ ¡Correcto!' : '❌ Incorrecto'}</strong><br>${p.exp}`;
+
+  document.getElementById('trivia-btn-siguiente').style.display = 'inline-flex';
+  document.getElementById('trivia-puntaje-header').textContent = `✅ ${triviaPts} correctas`;
+}
+
+function siguientePregunta() {
+  triviaIdx++;
+  if (triviaIdx >= triviaPregs.length) {
+    mostrarFinTrivia();
+  } else {
+    mostrarPregunta();
+  }
+}
+
+function mostrarFinTrivia() {
+  document.getElementById('trivia-juego').style.display = 'none';
+  document.getElementById('trivia-fin').style.display   = 'block';
+  const total = triviaPregs.length;
+  const pct   = Math.round((triviaPts / total) * 100);
+  let badge, titulo, texto;
+  if (pct >= 90)      { badge = '🏆'; titulo = '¡Excelente dominio!'; texto = `Respondiste correctamente ${triviaPts} de ${total} preguntas. Conocés la LCT a fondo.`; }
+  else if (pct >= 70) { badge = '⭐'; titulo = 'Muy buen resultado'; texto = `${triviaPts}/${total} correctas. Sólido conocimiento con algunos puntos para repasar.`; }
+  else if (pct >= 50) { badge = '📚'; titulo = 'Resultado aceptable'; texto = `${triviaPts}/${total} correctas. Vale la pena repasar las reformas recientes de la LCT.`; }
+  else                { badge = '💪'; titulo = 'Seguí practicando'; texto = `${triviaPts}/${total} correctas. Te recomendamos repasar los artículos marcados con error.`; }
+
+  document.getElementById('trivia-resultado-badge').textContent = badge;
+  document.getElementById('trivia-resultado-titulo').textContent = titulo;
+  document.getElementById('trivia-resultado-texto').textContent = texto;
+  document.getElementById('trivia-barra').style.width = '100%';
+  document.getElementById('trivia-score-detalle').innerHTML = `
+    <div style="display:inline-block;background:#f4f6f8;border-radius:10px;padding:14px 28px;font-size:28px;font-weight:800;color:var(--primary);">
+      ${triviaPts} <span style="font-size:16px;font-weight:400;color:var(--muted);">/ ${total} — ${pct}%</span>
+    </div>`;
+}
+
+// ============================================================
+// PWA — Totalmente inline (sin archivos externos)
+// ============================================================
+(function() {
+  const ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9Ijk2IiBmaWxsPSIjMWEzYTVjIi8+PHJlY3QgeD0iMjQ0IiB5PSI5NiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjMyMCIgcng9IjEyIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjEwMCIgeT0iMTQ4IiB3aWR0aD0iMzEyIiBoZWlnaHQ9IjIyIiByeD0iMTEiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMTUwIiB5PSIxNzAiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2MCIgcng9IjYiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMjA4IiB5PSIxNzAiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2MCIgcng9IjYiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEzOCAyMzAgUTE4MCAyOTAgMjIyIDIzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHJlY3QgeD0iMjkyIiB5PSIxNzAiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2MCIgcng9IjYiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMzUwIiB5PSIxNzAiIHdpZHRoPSIxMiIgaGVpZ2h0PSI2MCIgcng9IjYiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTI4MCAyMzAgUTMyMiAyOTAgMzY0IDIzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHJlY3QgeD0iMTc2IiB5PSI0MDQiIHdpZHRoPSIxNjAiIGhlaWdodD0iMjIiIHJ4PSIxMSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=';
+
+  // Ícono para iOS "Agregar a inicio"
+  document.getElementById('apple-touch-icon').href = ICON;
+
+  // Manifest inline como blob URL
+  const manifest = {
+    name: 'Tu Abogado al Toque',
+    short_name: 'Tu Abogado',
+    description: 'Herramienta de derecho laboral - Dr. Mario Martín Manulis',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#1a3a5c',
+    theme_color: '#1a3a5c',
+    orientation: 'portrait',
+    lang: 'es',
+    icons: [
+      { src: ICON, sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: ICON, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+    ]
+  };
+  const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  document.querySelector('link[rel="manifest"]').href = URL.createObjectURL(mBlob);
+
+  // Service Worker inline para instalabilidad
+  if ('serviceWorker' in navigator) {
+    const sw = `self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>self.clients.claim());
+self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('',{status:200}))));`;
+    const swBlob = new Blob([sw], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+  }
+
+  // Android: captura el prompt de instalación automático
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-fab').classList.add('visible');
+  });
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('install-fab').classList.remove('visible');
+    deferredPrompt = null;
+  });
+
+  window.installApp = async function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('install-fab').classList.remove('visible');
+    } else {
+      document.getElementById('install-modal').classList.add('open');
+    }
+  };
+  window.cerrarModalInstalar = function() {
+    document.getElementById('install-modal').classList.remove('open');
+  };
+  window.switchPlatform = function(p, btn) {
+    document.getElementById('inst-android').style.display = p === 'android' ? 'block' : 'none';
+    document.getElementById('inst-ios').style.display     = p === 'ios'     ? 'block' : 'none';
+    document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  };
+})();
+
+// ============================================================
+// INIT
+// ============================================================
+loadCausasFromAPI();
+renderAgenda();
+updatePlazoDesc();
+lrtTipoChange();
+document.getElementById('plazo-fecha').value = new Date().toISOString().split('T')[0];
+document.getElementById('liq-egreso').value  = new Date().toISOString().split('T')[0];
+</script>
+
+<!-- Botón flotante: Instalar App -->
+<button class="install-fab" id="install-fab" onclick="installApp()">
+  📲 Instalar App
+</button>
+
+<!-- Modal: Cómo instalar -->
+<div class="modal-overlay" id="install-modal">
+  <div class="modal" style="max-width:420px;">
+    <h3>📲 Instalar Tu Abogado al Toque</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Agregá la app a tu pantalla de inicio para abrirla como cualquier app, sin necesidad de buscarla.</p>
+    <div class="platform-tabs">
+      <button class="platform-tab active" onclick="switchPlatform('android',this)">🤖 Android</button>
+      <button class="platform-tab" onclick="switchPlatform('ios',this)">🍎 iPhone / iPad</button>
+    </div>
+    <div id="inst-android">
+      <div class="install-step">
+        <h4>En Google Chrome</h4>
+        <ol>
+          <li>Abrí esta página en <strong>Google Chrome</strong></li>
+          <li>Tocá los <strong>3 puntos ⋮</strong> (arriba a la derecha)</li>
+          <li>Tocá <strong>"Agregar a pantalla de inicio"</strong></li>
+          <li>Confirmá tocando <strong>"Agregar"</strong></li>
+        </ol>
+      </div>
+    </div>
+    <div id="inst-ios" style="display:none">
+      <div class="install-step">
+        <h4>En Safari (iPhone / iPad)</h4>
+        <ol>
+          <li>Abrí esta página en <strong>Safari</strong></li>
+          <li>Tocá el ícono de <strong>Compartir</strong> 〔↑〕 (barra inferior)</li>
+          <li>Deslizá hacia abajo y tocá <strong>"Agregar a inicio"</strong></li>
+          <li>Tocá <strong>"Agregar"</strong> arriba a la derecha</li>
+        </ol>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="cerrarModalInstalar()">Entendido</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
